@@ -5,7 +5,11 @@ import { withBase } from "./site";
 
 const ROOT_DIR = process.cwd();
 const PUBLISH_DIR = path.join(ROOT_DIR, "3апасной Мозг. Публикации в интернетах");
+const PUBLIC_DIR = path.join(ROOT_DIR, "public");
+const ASSET_PUBLIC_DIR = path.join(PUBLIC_DIR, "_vault");
 const IGNORED_DIRECTORIES = new Set([".obsidian", "Шаблоны"]);
+const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif"]);
+let assetsPrepared = false;
 
 const md = new MarkdownIt({
   html: false,
@@ -224,7 +228,7 @@ function extractDescription(content: string): string {
   const lines = content
     .split("\n")
     .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#") && !line.startsWith("![](") && !line.startsWith("```"));
+    .filter((line) => line && !line.startsWith("#") && !/^!\[[^\]]*\]\([^)]+\)$/.test(line) && !line.startsWith("![[") && !line.startsWith("```"));
 
   return lines.slice(0, 3).join(" ").slice(0, 220).trim();
 }
@@ -259,12 +263,111 @@ function normalizeTags(frontmatterTags: Frontmatter["tags"], content: string): s
   return [...new Set(values.map((item) => item.trim().toLowerCase()).filter(Boolean))];
 }
 
+function walkAssets(dir: string): string[] {
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (IGNORED_DIRECTORIES.has(entry.name)) {
+        return [];
+      }
+      return walkAssets(fullPath);
+    }
+
+    if (!entry.isFile()) {
+      return [];
+    }
+
+    return entry.name.endsWith(".md") ? [] : [fullPath];
+  });
+}
+
+function ensurePublicAsset(filePath: string): string {
+  const relativeAssetPath = path.relative(PUBLISH_DIR, filePath);
+  const publicAssetPath = path.join(ASSET_PUBLIC_DIR, relativeAssetPath);
+  const publicAssetDir = path.dirname(publicAssetPath);
+
+  fs.mkdirSync(publicAssetDir, { recursive: true });
+
+  if (!fs.existsSync(publicAssetPath)) {
+    fs.copyFileSync(filePath, publicAssetPath);
+  } else {
+    const sourceStat = fs.statSync(filePath);
+    const targetStat = fs.statSync(publicAssetPath);
+    if (sourceStat.mtimeMs > targetStat.mtimeMs || sourceStat.size !== targetStat.size) {
+      fs.copyFileSync(filePath, publicAssetPath);
+    }
+  }
+
+  return withBase(`/_vault/${relativeAssetPath.split(path.sep).map(encodeURIComponent).join("/")}`);
+}
+
+function ensurePublishedAssets(): void {
+  if (assetsPrepared) {
+    return;
+  }
+
+  walkAssets(PUBLISH_DIR).forEach((filePath) => {
+    ensurePublicAsset(filePath);
+  });
+
+  assetsPrepared = true;
+}
+
+function resolveAttachmentPath(notePath: string, target: string): string | null {
+  const normalizedTarget = target.trim();
+  if (!normalizedTarget) {
+    return null;
+  }
+
+  const directCandidate = path.resolve(path.dirname(notePath), normalizedTarget);
+  if (fs.existsSync(directCandidate) && fs.statSync(directCandidate).isFile()) {
+    return directCandidate;
+  }
+
+  const rootCandidate = path.join(PUBLISH_DIR, normalizedTarget);
+  if (fs.existsSync(rootCandidate) && fs.statSync(rootCandidate).isFile()) {
+    return rootCandidate;
+  }
+
+  const basename = path.basename(normalizedTarget);
+  const matches = walkAssets(PUBLISH_DIR).filter((filePath) => path.basename(filePath) === basename);
+  return matches.length > 0 ? matches[0] : null;
+}
+
+function renderObsidianEmbeds(content: string, filePath: string): string {
+  return content.replace(/!\[\[([^\]]+)\]\]/g, (_match, inner: string) => {
+    const [targetPart, labelPart] = inner.split("|");
+    const target = targetPart.trim();
+    const attachmentPath = resolveAttachmentPath(filePath, target);
+
+    if (!attachmentPath) {
+      return "";
+    }
+
+    const extension = path.extname(attachmentPath).toLowerCase();
+    if (!IMAGE_EXTENSIONS.has(extension)) {
+      return "";
+    }
+
+    const src = ensurePublicAsset(attachmentPath);
+    const alt = (labelPart?.trim() || path.basename(target, path.extname(target))).replace(/"/g, "&quot;");
+    return `![${alt}](${src})`;
+  });
+}
+
 export function getAllPosts(): Post[] {
+  ensurePublishedAssets();
+
   return walk(PUBLISH_DIR)
     .map((filePath) => {
       const raw = fs.readFileSync(filePath, "utf8");
       const stats = fs.statSync(filePath);
       const { data, content } = parseFrontmatter(raw);
+      const normalizedContent = renderObsidianEmbeds(content, filePath);
       const relativePath = path.relative(PUBLISH_DIR, filePath).replace(/\\/g, "/");
       const segments = relativePath.split("/");
       const filename = segments.at(-1) ?? "post.md";
@@ -273,13 +376,13 @@ export function getAllPosts(): Post[] {
       const leafSlug = slugifySegment(data.slug?.trim() || filename) || "post";
       const slug = [section, ...nestedDirectories, leafSlug].join("/");
       const titleFallback = humanizeFilename(filename);
-      const title = data.title?.trim() || extractTitle(content, titleFallback);
-      const description = data.description?.trim() || extractDescription(content) || "Материал без описания.";
+      const title = data.title?.trim() || extractTitle(normalizedContent, titleFallback);
+      const description = data.description?.trim() || extractDescription(normalizedContent) || "Материал без описания.";
       const updatedAt = stats.mtime.toISOString();
       const date = normalizeDate(data.date, stats.mtime);
       const draft = data.draft === true || data.draft === "true";
       const featured = data.featured === true || data.featured === "true";
-      const tags = normalizeTags(data.tags, content);
+      const tags = normalizeTags(data.tags, normalizedContent);
 
       return {
         id: relativePath,
@@ -288,14 +391,14 @@ export function getAllPosts(): Post[] {
         section,
         slug,
         url: withBase(`/${slug}/`),
-        rawContent: content,
-        html: md.render(content),
+        rawContent: normalizedContent,
+        html: md.render(normalizedContent),
         tags,
         date,
         updatedAt,
         draft,
         featured,
-        readingTime: readingTime(content),
+        readingTime: readingTime(normalizedContent),
         relativePath
       };
     })

@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/sync-vault-assets.mjs",
+    "prestart": "node scripts/sync-vault-assets.mjs",
+    "prebuild": "node scripts/sync-vault-assets.mjs",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
