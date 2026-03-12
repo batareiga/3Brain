@@ -1,4 +1,6 @@
 ---
+import SearchPanel from "./SearchPanel.astro";
+import { getAllPosts } from "../lib/content";
 import { withBase } from "../lib/site";
 
 const nav = [
@@ -6,22 +8,34 @@ const nav = [
   { href: withBase("/archive/"), label: "Архив" },
   { href: withBase("/about/"), label: "О проекте" }
 ];
+const posts = getAllPosts();
 ---
 
 <header class="site-header">
   <div class="shell bar">
     <a class="brand" href={withBase("/")}>
-      <span class="brand-mark" aria-hidden="true">3B</span>
+      <span class="brand-mark" aria-hidden="true">3🧠</span>
       <span class="brand-copy">
         <strong>3Brain</strong>
         <small>Запасной Мозг</small>
       </span>
     </a>
-    <nav>
-      {nav.map((item) => (
-        <a href={item.href}>{item.label}</a>
-      ))}
-    </nav>
+    <div class="header-tools">
+      <nav>
+        {nav.map((item) => (
+          <a href={item.href}>{item.label}</a>
+        ))}
+      </nav>
+      <span class="header-divider" aria-hidden="true"></span>
+      <SearchPanel
+        id="header-search"
+        posts={posts}
+        compact={true}
+        minimal={true}
+        limit={5}
+        showInitialResults={false}
+      />
+    </div>
   </div>
 </header>
 
@@ -34,12 +48,12 @@ const nav = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem 1.2rem;
+    gap: 1.25rem;
+    padding: 0.85rem 1rem;
     border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(10, 11, 12, 0.45);
-    backdrop-filter: blur(16px);
+    border-radius: 1.8rem;
+    background: rgba(10, 11, 12, 0.58);
+    backdrop-filter: blur(20px);
     position: sticky;
     top: 1rem;
     z-index: 10;
@@ -50,12 +64,13 @@ const nav = [
     align-items: center;
     gap: 0.8rem;
     min-width: 0;
+    flex: none;
   }
 
   .brand-mark {
     display: grid;
     place-items: center;
-    width: 2.7rem;
+    width: 2.55rem;
     aspect-ratio: 1;
     border-radius: 0.95rem;
     border: 1px solid rgba(216, 173, 98, 0.2);
@@ -66,9 +81,9 @@ const nav = [
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
       0 10px 24px rgba(0, 0, 0, 0.22);
     color: var(--accent-soft);
-    font-size: 0.98rem;
+    font-size: 0.84rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
   }
 
   .brand-copy {
@@ -78,7 +93,7 @@ const nav = [
   }
 
   .brand-copy strong {
-    font-size: 1rem;
+    font-size: 0.98rem;
     line-height: 1;
     letter-spacing: -0.05em;
     background: linear-gradient(180deg, #fff5df 0%, #d8ad62 100%);
@@ -98,32 +113,67 @@ const nav = [
 
   .brand-copy small {
     color: var(--muted);
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
   nav {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
-    gap: 0.9rem;
+    gap: 0.35rem;
+  }
+
+  .header-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-divider {
+    width: 1px;
+    align-self: stretch;
+    background: linear-gradient(180deg, transparent, var(--line), transparent);
   }
 
   nav a {
     color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.55rem;
+    padding: 0 0.78rem;
+    border-radius: 999px;
   }
 
   nav a:hover {
     color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   @media (max-width: 720px) {
     .bar {
-      border-radius: 1.2rem;
+      border-radius: 1.3rem;
       align-items: flex-start;
       flex-direction: column;
+    }
+
+    .header-tools {
+      width: 100%;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .header-divider {
+      display: none;
+    }
+
+    nav {
+      justify-content: flex-start;
     }
   }
 </style>

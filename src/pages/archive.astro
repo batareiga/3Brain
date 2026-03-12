@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostCard from "../components/PostCard.astro";
-import SearchPanel from "../components/SearchPanel.astro";
 import { getAllPosts } from "../lib/content";
 
 const posts = getAllPosts();
@@ -14,15 +13,6 @@ const posts = getAllPosts();
       <h1>Все публикации</h1>
       <p>Здесь весь контент без фильтрации. Удобно для обзора и проверки структуры сайта.</p>
     </div>
-    <div class="archive-search">
-      <SearchPanel
-        id="archive-search"
-        posts={posts}
-        title="Быстрый поиск по сайту"
-        description="Работает по всей базе: заголовки, описания, теги и названия разделов."
-        limit={8}
-      />
-    </div>
     <div class="cards">
       {posts.map((post) => (
         <PostCard post={post} />
@@ -34,9 +24,5 @@ const posts = getAllPosts();
 <style>
   .block {
     padding-top: 2rem;
-  }
-
-  .archive-search {
-    margin: 0 0 1.4rem;
   }
 </style>

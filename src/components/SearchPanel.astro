@@ -10,6 +10,9 @@ type Props = {
   description?: string;
   compact?: boolean;
   limit?: number;
+  showInitialResults?: boolean;
+  minimal?: boolean;
+  floatingResults?: boolean;
 };
 
 const {
@@ -19,7 +22,10 @@ const {
   title = "Найти по базе",
   description = "Поиск по заголовкам, описаниям, тегам и разделам.",
   compact = false,
-  limit = compact ? 4 : 12
+  limit = compact ? 4 : 12,
+  showInitialResults = true,
+  minimal = false,
+  floatingResults = false
 } = Astro.props;
 
 const items = posts.map((post) => ({
@@ -35,16 +41,23 @@ const items = posts.map((post) => ({
 ---
 
 <section
-  class:list={["search-panel panel", compact && "compact"]}
+  class:list={[
+    "search-panel panel",
+    compact && "compact",
+    minimal && "minimal",
+    floatingResults && "floating-results"
+  ]}
   data-search-root
   data-limit={limit}
-  data-empty-text="Ничего не найдено. Попробуйте другое слово или тег."
+  data-show-initial-results={showInitialResults ? "true" : "false"}
 >
-  <div class="search-copy">
-    <span class="eyebrow">{eyebrow}</span>
-    <h2>{title}</h2>
-    <p>{description}</p>
-  </div>
+  {!minimal && (
+    <div class="search-copy">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  )}
 
   <label class="search-input" for={`${id}-search`}>
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -52,15 +65,20 @@ const items = posts.map((post) => ({
         d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 4.56 12.88l4.41 4.42l-1.06 1.06L14 17.2a7.25 7.25 0 0 1-3.5.9Z"
       />
     </svg>
-    <input id={`${id}-search`} type="search" placeholder="Например: cli, деньги, проект" autocomplete="off" />
+    <input
+      id={`${id}-search`}
+      type="search"
+      placeholder={minimal ? "Поиск по базе" : "Например: cli, деньги, проект"}
+      autocomplete="off"
+    />
   </label>
 
-  <div class="search-summary" data-search-summary>
-    Показаны все материалы: {items.length}
+  <div class:list={["search-summary", (minimal || floatingResults) && "summary-hidden"]} data-search-summary>
+    {showInitialResults ? `Показаны все материалы: ${items.length}` : "Начните вводить запрос"}
   </div>
 
   <div class="search-results" data-search-results>
-    {items.slice(0, limit).map((item) => (
+    {showInitialResults && items.slice(0, limit).map((item) => (
       <a class="search-result" href={item.url}>
         <span class="result-meta">
           <span>{item.section}</span>
@@ -68,13 +86,13 @@ const items = posts.map((post) => ({
           <span>{item.readingTime} мин</span>
         </span>
         <strong>{item.title}</strong>
-        <span>{item.description}</span>
+        <span class="result-description">{item.description}</span>
       </a>
     ))}
   </div>
 
   <template data-search-empty>
-    <div class="search-empty">Ничего не найдено. Попробуйте другое слово или тег.</div>
+    <div class="search-empty">Ничего не найдено.</div>
   </template>
 
   <script type="application/json" data-search-data set:html={JSON.stringify(items)} />
@@ -91,12 +109,19 @@ const items = posts.map((post) => ({
     const emptyTemplate = root.querySelector("[data-search-empty]");
     const dataNode = root.querySelector("[data-search-data]");
     const limit = Number(root.dataset.limit || "10");
+    const showInitialResults = root.dataset.showInitialResults === "true";
 
     if (!input || !results || !summary || !emptyTemplate || !dataNode?.textContent) return;
 
     const items = JSON.parse(dataNode.textContent);
     const render = (query) => {
       const normalized = query.trim().toLowerCase();
+      if (!normalized && !showInitialResults) {
+        summary.textContent = "Начните вводить запрос";
+        results.innerHTML = "";
+        return;
+      }
+
       const filtered = normalized
         ? items.filter((item) => item.search.includes(normalized))
         : items;
@@ -121,7 +146,7 @@ const items = posts.map((post) => ({
                 <span>${item.readingTime} мин</span>
               </span>
               <strong>${item.title}</strong>
-              <span>${item.description}</span>
+              <span class="result-description">${item.description}</span>
             </a>
           `
         )
@@ -130,6 +155,14 @@ const items = posts.map((post) => ({
 
     input.addEventListener("input", (event) => {
       render(event.currentTarget.value);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        input.value = "";
+        render("");
+        input.blur();
+      }
     });
   });
 </script>
@@ -224,6 +257,13 @@ const items = posts.map((post) => ({
     letter-spacing: -0.03em;
   }
 
+  .result-description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
   .result-meta {
     display: flex;
     flex-wrap: wrap;
@@ -241,5 +281,133 @@ const items = posts.map((post) => ({
 
   .compact .search-copy p {
     font-size: 0.9rem;
+  }
+
+  .minimal {
+    position: relative;
+    padding: 0;
+    width: min(100%, 18.5rem);
+    min-width: 15rem;
+    isolation: isolate;
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .minimal .search-input {
+    min-height: 2.85rem;
+    border-radius: 999px;
+    border-color: rgba(255, 248, 232, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .minimal .search-input:focus-within {
+    border-color: rgba(216, 173, 98, 0.28);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 4px rgba(216, 173, 98, 0.08);
+  }
+
+  .minimal .search-summary {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    font-size: 0.84rem;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .minimal .search-results {
+    position: absolute;
+    top: calc(100% + 0.7rem);
+    right: 0;
+    width: min(26rem, 92vw);
+    max-height: min(65vh, 28rem);
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 248, 232, 0.1);
+    border-radius: 1.15rem;
+    background: rgba(12, 14, 16, 0.98);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(18px);
+    z-index: 20;
+  }
+
+  .minimal .search-results:empty {
+    display: none;
+  }
+
+  .minimal .search-result,
+  .minimal .search-empty {
+    box-shadow: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .minimal .search-result {
+    gap: 0.32rem;
+    padding: 0.82rem 0.95rem;
+  }
+
+  .minimal .search-result strong {
+    font-size: 0.95rem;
+  }
+
+  .minimal .result-meta {
+    gap: 0.35rem 0.6rem;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .minimal .result-description {
+    display: none;
+  }
+
+  .summary-hidden {
+    display: none;
+  }
+
+  .floating-results {
+    position: relative;
+  }
+
+  .floating-results .search-results {
+    position: absolute;
+    top: calc(100% - 0.15rem);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: min(60vh, 24rem);
+    overflow-y: auto;
+    padding-top: 0.75rem;
+  }
+
+  .floating-results .search-results:empty {
+    display: none;
+  }
+
+  .floating-results .search-result,
+  .floating-results .search-empty {
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+    background: rgba(18, 20, 22, 0.96);
+  }
+
+  @media (max-width: 720px) {
+    .minimal {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .minimal .search-results {
+      width: 100%;
+      right: auto;
+      left: 0;
+    }
+
+    .floating-results .search-results {
+      max-height: 20rem;
+    }
   }
 </style>
