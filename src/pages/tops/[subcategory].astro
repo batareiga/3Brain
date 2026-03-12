@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import {
+  getAllPosts,
+  getPostsByPrefix,
+  getSectionSubsections,
+  subsectionDescription,
+  subsectionLabel
+} from "../../lib/content";
+
+export function getStaticPaths() {
+  const posts = getAllPosts();
+  return getSectionSubsections("tops").map((subcategory) => ({
+    params: { subcategory },
+    props: {
+      subcategory,
+      posts: getPostsByPrefix(`tops/${subcategory}`, posts)
+    }
+  }));
+}
+
+const { subcategory, posts } = Astro.props;
+const title = subsectionLabel("tops", subcategory);
+const description = subsectionDescription("tops", subcategory);
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="shell block">
+    <div class="section-heading">
+      <span class="eyebrow">Топы</span>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+
+    {posts.length > 0 ? (
+      <div class="cards">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty panel">
+        <strong>Подкатегория готова</strong>
+        <span>Добавьте заметки в `3апасной Мозг. Публикации в интернетах/tops/{subcategory}/`, и они автоматически появятся здесь.</span>
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .block {
+    padding-top: 2rem;
+  }
+
+  .empty {
+    display: grid;
+    gap: 0.45rem;
+    padding: 1.4rem;
+  }
+
+  .empty strong {
+    font-size: 1.2rem;
+    letter-spacing: -0.03em;
+  }
+
+  .empty span {
+    color: var(--muted);
+  }
+</style>

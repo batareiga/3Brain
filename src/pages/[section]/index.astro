@@ -1,7 +1,16 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import { getAllPosts, getPostsBySection, getSections, sectionLabel } from "../../lib/content";
+import {
+  getAllPosts,
+  getPostsBySection,
+  getSectionSubsections,
+  getSections,
+  sectionLabel,
+  subsectionDescription,
+  subsectionLabel
+} from "../../lib/content";
+import { withBase } from "../../lib/site";
 
 export function getStaticPaths() {
   const posts = getAllPosts();
@@ -9,12 +18,14 @@ export function getStaticPaths() {
     params: { section },
     props: {
       section,
-      posts: getPostsBySection(section, posts)
+      posts: getPostsBySection(section, posts),
+      subsections: getSectionSubsections(section)
     }
   }));
 }
 
-const { section, posts } = Astro.props;
+const { section, posts, subsections } = Astro.props;
+const isTops = section === "tops";
 ---
 
 <BaseLayout title={sectionLabel(section)} description={`Материалы раздела ${sectionLabel(section)}.`}>
@@ -22,18 +33,46 @@ const { section, posts } = Astro.props;
     <div class="section-heading">
       <span class="eyebrow">Раздел</span>
       <h1>{sectionLabel(section)}</h1>
-      <p>Автоматическая страница раздела по структуре папок внутри `publish/`.</p>
+      <p>{isTops ? "Каталог топов по подкатегориям. Каждая подпапка в `3апасной Мозг. Публикации в интернетах/tops/` становится отдельной витриной." : "Автоматическая страница раздела по структуре папок внутри `3апасной Мозг. Публикации в интернетах/`."}</p>
     </div>
-    <div class="cards">
-      {posts.map((post) => (
-        <PostCard post={post} />
-      ))}
-    </div>
+    {isTops && subsections.length > 0 ? (
+      <div class="cards subsection-grid">
+        {subsections.map((subsection) => (
+          <a class="subsection-card panel span-4" href={withBase(`/tops/${subsection}/`)}>
+            <strong>{subsectionLabel(section, subsection)}</strong>
+            <span>{subsectionDescription(section, subsection)}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="cards">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    )}
   </section>
 </BaseLayout>
 
 <style>
   .block {
     padding-top: 2rem;
+  }
+
+  .subsection-card {
+    display: grid;
+    gap: 0.6rem;
+    min-height: 12rem;
+    padding: 1.35rem;
+    align-content: end;
+  }
+
+  .subsection-card strong {
+    font-size: 1.45rem;
+    letter-spacing: -0.04em;
+  }
+
+  .subsection-card span {
+    color: var(--muted);
   }
 </style>

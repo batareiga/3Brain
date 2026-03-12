@@ -96,18 +96,22 @@ const graphEdges = graphSections.flatMap((sectionNode) =>
         <div class="relations-stats">
           <div>
             <strong>{graphEdges.length}</strong>
+            <i></i>
             <span>связей между разделами и тегами</span>
           </div>
           <div>
             <strong>{posts.length}</strong>
+            <i></i>
             <span>материалов в базе</span>
           </div>
           <div>
             <strong>{sections.length}</strong>
+            <i></i>
             <span>живых разделов</span>
           </div>
           <div>
             <strong>{averageReadingTime} мин</strong>
+            <i></i>
             <span>среднее время чтения записи</span>
           </div>
         </div>
@@ -145,7 +149,7 @@ const graphEdges = graphSections.flatMap((sectionNode) =>
     <div class="section-heading">
       <span class="eyebrow">Карта тем</span>
       <h2>Разделы базы</h2>
-      <p>Каждая папка в `publish/` автоматически становится разделом сайта.</p>
+      <p>Каждая папка в `3апасной Мозг. Публикации в интернетах/` автоматически становится разделом сайта.</p>
     </div>
     <SectionGrid sections={sections} />
   </section>
@@ -281,8 +285,10 @@ const graphEdges = graphSections.flatMap((sectionNode) =>
 
   .relations-stats div {
     display: grid;
-    gap: 0.22rem;
-    padding-top: 0.75rem;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.7rem;
+    padding-top: 0.85rem;
     border-top: 1px solid var(--line);
   }
 
@@ -292,13 +298,21 @@ const graphEdges = graphSections.flatMap((sectionNode) =>
   }
 
   .relations-stats strong {
-    font-size: 1.55rem;
+    font-size: 1.25rem;
     line-height: 1;
     letter-spacing: -0.05em;
+    white-space: nowrap;
   }
 
   .relations-stats span {
     color: var(--muted);
+    font-size: 0.95rem;
+    text-align: right;
+  }
+
+  .relations-stats i {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(216, 173, 98, 0.18), transparent);
   }
 
   .block {

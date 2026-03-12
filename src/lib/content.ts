@@ -4,7 +4,7 @@ import MarkdownIt from "markdown-it";
 import { withBase } from "./site";
 
 const ROOT_DIR = process.cwd();
-const PUBLISH_DIR = path.join(ROOT_DIR, "publish");
+const PUBLISH_DIR = path.join(ROOT_DIR, "3апасной Мозг. Публикации в интернетах");
 
 const md = new MarkdownIt({
   html: false,
@@ -52,6 +52,21 @@ function walk(dir: string): string[] {
 
     return entry.isFile() && entry.name.endsWith(".md") ? [fullPath] : [];
   });
+}
+
+function getTopLevelSections(): string[] {
+  if (!fs.existsSync(PUBLISH_DIR)) {
+    return [];
+  }
+
+  return fs.readdirSync(PUBLISH_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
+    .map((entry) => slugifySegment(entry.name))
+    .filter(Boolean);
+}
+
+function getSectionDirectory(section: string): string {
+  return path.join(PUBLISH_DIR, section);
 }
 
 function transliterate(value: string): string {
@@ -246,11 +261,28 @@ export function getAllPosts(): Post[] {
 }
 
 export function getSections(posts = getAllPosts()): string[] {
-  return [...new Set(posts.map((post) => post.section))];
+  return [...new Set([...getTopLevelSections(), ...posts.map((post) => post.section)])];
 }
 
 export function getPostsBySection(section: string, posts = getAllPosts()): Post[] {
   return posts.filter((post) => post.section === section);
+}
+
+export function getPostsByPrefix(prefix: string, posts = getAllPosts()): Post[] {
+  const normalizedPrefix = prefix.replace(/^\/+|\/+$/g, "");
+  return posts.filter((post) => post.slug.startsWith(`${normalizedPrefix}/`));
+}
+
+export function getSectionSubsections(section: string): string[] {
+  const directory = getSectionDirectory(section);
+  if (!fs.existsSync(directory)) {
+    return [];
+  }
+
+  return fs.readdirSync(directory, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
+    .map((entry) => slugifySegment(entry.name))
+    .filter(Boolean);
 }
 
 export function getAllTags(posts = getAllPosts()): string[] {
@@ -301,8 +333,31 @@ export function sectionLabel(section: string): string {
     life: "Жизнь",
     notes: "Заметки",
     projects: "Проекты",
-    partners: "Партнерства"
+    partners: "Партнерства",
+    tops: "Топы"
   };
 
   return map[section] ?? humanizeFilename(section);
+}
+
+export function subsectionLabel(section: string, subsection: string): string {
+  const map: Record<string, Record<string, string>> = {
+    tops: {
+      services: "Сервисы",
+      tooling: "Инструментарий"
+    }
+  };
+
+  return map[section]?.[subsection] ?? sectionLabel(subsection);
+}
+
+export function subsectionDescription(section: string, subsection: string): string {
+  const map: Record<string, Record<string, string>> = {
+    tops: {
+      services: "Подборки сервисов, платформ и утилит с практическим применением.",
+      tooling: "Инструменты, наборы и рабочий стек для конкретных задач."
+    }
+  };
+
+  return map[section]?.[subsection] ?? "Материалы и подборки внутри подкатегории.";
 }
