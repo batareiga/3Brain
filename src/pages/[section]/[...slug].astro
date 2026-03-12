@@ -1,0 +1,117 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, getAllPosts, getRelatedPosts, sectionLabel } from "../../lib/content";
+import PostCard from "../../components/PostCard.astro";
+import { absoluteUrl } from "../../lib/seo";
+
+export function getStaticPaths() {
+  const posts = getAllPosts();
+  return posts.map((post) => {
+    const parts = post.slug.split("/");
+    return {
+      params: {
+        section: parts[0],
+        slug: parts.slice(1).join("/")
+      },
+      props: { post, related: getRelatedPosts(post, posts) }
+    };
+  });
+}
+
+const { post, related } = Astro.props;
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.description,
+  datePublished: post.date,
+  dateModified: post.updatedAt,
+  articleSection: sectionLabel(post.section),
+  keywords: post.tags.join(", "),
+  mainEntityOfPage: absoluteUrl(post.url)
+};
+---
+
+<BaseLayout title={post.title} description={post.description} pathname={post.url}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  </Fragment>
+
+  <article class="shell article">
+    <header class="article-head">
+      <span class="eyebrow">{sectionLabel(post.section)}</span>
+      <h1>{post.title}</h1>
+      <p>{post.description}</p>
+      <div class="meta">
+        <span>{formatDate(post.date)}</span>
+        <span>{post.readingTime} мин чтения</span>
+        <span>{post.relativePath}</span>
+      </div>
+      {post.tags.length > 0 && (
+        <div class="pill-list">
+          {post.tags.map((tag) => (
+            <a class="pill" href={`/tags/${tag}/`}>#{tag}</a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="article-body panel prose" set:html={post.html} />
+  </article>
+
+  {related.length > 0 && (
+    <section class="shell related-block">
+      <div class="section-heading">
+        <span class="eyebrow">Рядом</span>
+        <h2>Похожие материалы</h2>
+      </div>
+      <div class="cards">
+        {related.map((item) => (
+          <PostCard post={item} />
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .article {
+    display: grid;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .article-head {
+    display: grid;
+    gap: 1rem;
+    max-width: 52rem;
+  }
+
+  .article-head h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 4.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+  }
+
+  .article-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.08rem;
+  }
+
+  .article-body {
+    padding: 1.4rem;
+  }
+
+  .related-block {
+    padding-top: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .article-body {
+      padding: 2rem;
+    }
+  }
+</style>

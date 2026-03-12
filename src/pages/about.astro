@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="О проекте" description="Что такое Запасной Мозг и как он устроен.">
+  <section class="shell about panel">
+    <div class="section-heading">
+      <span class="eyebrow">О проекте</span>
+      <h1>Запасной Мозг</h1>
+      <p>
+        Это личный блог и база знаний о практичных инструментах, цифровых системах, идеях,
+        заработке, проектах и рабочих наблюдениях. Не витрина и не журнал, а место, куда
+        возвращаются за полезным.
+      </p>
+    </div>
+
+    <div class="columns">
+      <div>
+        <h2>Как устроена публикация</h2>
+        <p>
+          Сайт читает markdown напрямую из папки <code>publish/</code>. Если frontmatter нет,
+          заголовок, адрес, описание, дата и раздел определяются автоматически.
+        </p>
+      </div>
+      <div>
+        <h2>Что здесь важно</h2>
+        <p>
+          Скорость, ясность, читаемость, аккуратная структура и отсутствие лишних зависимостей.
+          Контент должен быть проще публиковать, чем откладывать.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1.6rem;
+  }
+
+  .columns {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .columns h2 {
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.03em;
+  }
+
+  .columns p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  @media (min-width: 760px) {
+    .columns {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

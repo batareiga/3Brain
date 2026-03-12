@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getAllPosts, getPostsBySection, getSections, sectionLabel } from "../../lib/content";
+
+export function getStaticPaths() {
+  const posts = getAllPosts();
+  return getSections(posts).map((section) => ({
+    params: { section },
+    props: {
+      section,
+      posts: getPostsBySection(section, posts)
+    }
+  }));
+}
+
+const { section, posts } = Astro.props;
+---
+
+<BaseLayout title={sectionLabel(section)} description={`Материалы раздела ${sectionLabel(section)}.`}>
+  <section class="shell block">
+    <div class="section-heading">
+      <span class="eyebrow">Раздел</span>
+      <h1>{sectionLabel(section)}</h1>
+      <p>Автоматическая страница раздела по структуре папок внутри `publish/`.</p>
+    </div>
+    <div class="cards">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .block {
+    padding-top: 2rem;
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+const nav = [
+  { href: "/", label: "Главная" },
+  { href: "/archive/", label: "Архив" },
+  { href: "/about/", label: "О проекте" }
+];
+---
+
+<header class="site-header">
+  <div class="shell bar">
+    <a class="brand" href="/">
+      <span>Запасной Мозг</span>
+      <small>Блог и база знаний</small>
+    </a>
+    <nav>
+      {nav.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    padding: 1rem 1.25rem 0;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(10, 11, 12, 0.45);
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 1rem;
+    z-index: 10;
+  }
+
+  .brand {
+    display: grid;
+    gap: 0.05rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .brand small {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.9rem;
+  }
+
+  nav a {
+    color: var(--muted);
+  }
+
+  nav a:hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 720px) {
+    .bar {
+      border-radius: 1.2rem;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

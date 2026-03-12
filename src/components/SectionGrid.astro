@@ -1,0 +1,43 @@
+---
+import { sectionLabel } from "../lib/content";
+
+type Props = {
+  sections: string[];
+};
+
+const { sections } = Astro.props;
+---
+
+<div class="cards">
+  {sections.map((section) => (
+    <a class="section-card panel span-4" href={`/${section}/`}>
+      <strong>{sectionLabel(section)}</strong>
+      <span>Материалы, заметки и опорные записи по теме.</span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .section-card {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1.35rem;
+    min-height: 11rem;
+    align-content: end;
+    transition: transform 180ms ease, border-color 180ms ease;
+  }
+
+  .section-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(216, 173, 98, 0.35);
+  }
+
+  .section-card strong {
+    font-size: 1.4rem;
+    letter-spacing: -0.03em;
+  }
+
+  .section-card span {
+    color: var(--muted);
+  }
+</style>

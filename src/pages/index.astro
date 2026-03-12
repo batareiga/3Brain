@@ -1,0 +1,180 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import SectionGrid from "../components/SectionGrid.astro";
+import {
+  getAllPosts,
+  getFeaturedPosts,
+  getRecentPosts,
+  getSections,
+  sectionLabel
+} from "../lib/content";
+
+const posts = getAllPosts();
+const recent = getRecentPosts(posts, 6);
+const featured = getFeaturedPosts(posts, 3);
+const sections = getSections(posts);
+---
+
+<BaseLayout>
+  <section class="shell hero">
+    <div class="intro panel">
+      <span class="eyebrow">Личный блог разведчика-практика</span>
+      <h1>Тихая база знаний для решений, инструментов и рабочих наблюдений.</h1>
+      <p>
+        Здесь собираются материалы, к которым удобно возвращаться: CLI-инструменты, модели
+        заработка, заметки по проектам, идеи, подборки и короткие полевые записи.
+      </p>
+      <div class="hero-actions">
+        <a class="primary" href="/archive/">Открыть архив</a>
+        <a class="secondary" href="/about/">Что это за место</a>
+      </div>
+    </div>
+    <div class="hero-side panel">
+      <div>
+        <strong>{posts.length}</strong>
+        <span>материалов уже в базе</span>
+      </div>
+      <div>
+        <strong>{sections.length}</strong>
+        <span>тематических направлений</span>
+      </div>
+      <div>
+        <strong>{sectionLabel(sections[0] ?? "notes")}</strong>
+        <span>самый свежий активный раздел</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell block">
+    <div class="section-heading">
+      <span class="eyebrow">Лучшее</span>
+      <h2>Материалы, с которых стоит начать</h2>
+      <p>Если у записи нет явного `featured`, блок сам заполняется свежими сильными публикациями.</p>
+    </div>
+    <div class="cards">
+      {featured.map((post, index) => (
+        <PostCard post={post} className={index === 0 ? "span-8" : "span-4"} />
+      ))}
+    </div>
+  </section>
+
+  <section class="shell block">
+    <div class="section-heading">
+      <span class="eyebrow">Свежее</span>
+      <h2>Последние публикации</h2>
+      <p>Лента без лишних декораций: дата, время чтения, тема и короткое описание.</p>
+    </div>
+    <div class="cards">
+      {recent.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+
+  <section class="shell block">
+    <div class="section-heading">
+      <span class="eyebrow">Карта тем</span>
+      <h2>Разделы базы</h2>
+      <p>Каждая папка в `publish/` автоматически становится разделом сайта.</p>
+    </div>
+    <SectionGrid sections={sections} />
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .intro,
+  .hero-side {
+    padding: 1.5rem;
+  }
+
+  .intro h1 {
+    margin: 0.8rem 0 1rem;
+    max-width: 13ch;
+    font-size: clamp(2.8rem, 8vw, 5.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+  }
+
+  .intro p {
+    max-width: 44rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero-actions a {
+    min-height: 3rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+
+  .primary {
+    background: var(--accent);
+    color: #161616;
+    border-color: transparent;
+    font-weight: 700;
+  }
+
+  .secondary {
+    color: var(--muted);
+  }
+
+  .hero-side {
+    display: grid;
+    gap: 1rem;
+    align-content: end;
+  }
+
+  .hero-side div {
+    display: grid;
+    gap: 0.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero-side div:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .hero-side strong {
+    font-size: 1.8rem;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-side span {
+    color: var(--muted);
+  }
+
+  .block {
+    padding-top: 3.8rem;
+  }
+
+  @media (min-width: 920px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.75fr);
+      align-items: stretch;
+    }
+
+    .intro,
+    .hero-side {
+      padding: 2rem;
+    }
+  }
+</style>

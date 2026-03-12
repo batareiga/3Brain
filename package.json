@@ -1,0 +1,19 @@
+{
+  "name": "3brain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.11",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.5.2",
+    "markdown-it": "^14.1.0",
+    "shiki": "^4.0.2"
+  }
+}
