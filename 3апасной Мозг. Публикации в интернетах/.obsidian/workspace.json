@@ -11,10 +11,14 @@
             "id": "da6afae8c00bdb75",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Project/brain-as-interface.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "brain-as-interface"
             }
           }
         ]
@@ -74,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "46c38d3729cbfaf1",
@@ -187,8 +191,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a9dc205147734de3",
+  "active": "e7964a6bd53d80a3",
   "lastOpenFiles": [
+    "Tools/top-ai-cli.md",
+    "Idea/anti-fragile-content-systems.md",
+    "Tops/Partners",
+    "Tops/Service",
+    "Tops",
     "Test/Без названия.md",
     "Test"
   ]
