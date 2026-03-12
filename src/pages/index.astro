@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostCard from "../components/PostCard.astro";
 import SectionGrid from "../components/SectionGrid.astro";
+import SearchPanel from "../components/SearchPanel.astro";
 import {
   getAllPosts,
   getFeaturedPosts,
@@ -15,6 +16,18 @@ const posts = getAllPosts();
 const recent = getRecentPosts(posts, 6);
 const featured = getFeaturedPosts(posts, 3);
 const sections = getSections(posts);
+const chartPosts = [...posts].slice(0, 7).reverse();
+const chartValues = chartPosts.map((post, index) => (
+  post.readingTime * 16 + post.tags.length * 9 + Math.min(post.title.length, 42) * 0.55 + index * 3
+));
+const chartMaxReading = Math.max(...chartValues, 1);
+const chartPoints = chartPosts
+  .map((post, index) => {
+    const x = chartPosts.length === 1 ? 50 : (index / (chartPosts.length - 1)) * 100;
+    const y = 82 - (chartValues[index] / chartMaxReading) * 46;
+    return `${x},${y.toFixed(1)}`;
+  })
+  .join(" ");
 ---
 
 <BaseLayout>
@@ -32,18 +45,48 @@ const sections = getSections(posts);
       </div>
     </div>
     <div class="hero-side panel">
-      <div>
-        <strong>{posts.length}</strong>
-        <span>материалов уже в базе</span>
+      <div class="signal-card">
+        <div class="signal-head">
+          <span class="eyebrow">Темп базы</span>
+          <strong>Пульс записей</strong>
+        </div>
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <linearGradient id="hero-chart-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(216, 173, 98, 0.25)" />
+              <stop offset="45%" stop-color="rgba(216, 173, 98, 0.9)" />
+              <stop offset="100%" stop-color="rgba(242, 211, 157, 0.45)" />
+            </linearGradient>
+            <linearGradient id="hero-chart-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(216, 173, 98, 0.28)" />
+              <stop offset="100%" stop-color="rgba(216, 173, 98, 0)" />
+            </linearGradient>
+          </defs>
+          <path d={`M 0 90 L 0 82 L ${chartPoints} L 100 82 L 100 90 Z`} />
+          <polyline points={chartPoints} />
+        </svg>
+        <div class="signal-stats">
+          <div>
+            <strong>{posts.length}</strong>
+            <span>материалов в базе</span>
+          </div>
+          <div>
+            <strong>{sections.length}</strong>
+            <span>живых направлений</span>
+          </div>
+          <div>
+            <strong>{sectionLabel(sections[0] ?? "notes")}</strong>
+            <span>самый свежий раздел</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <strong>{sections.length}</strong>
-        <span>тематических направлений</span>
-      </div>
-      <div>
-        <strong>{sectionLabel(sections[0] ?? "notes")}</strong>
-        <span>самый свежий активный раздел</span>
-      </div>
+      <SearchPanel
+        id="home-search"
+        posts={posts}
+        compact={true}
+        title="Поиск по сайту"
+        description="Сразу по заголовкам, описаниям, тегам и разделам."
+      />
     </div>
   </section>
 
@@ -138,28 +181,74 @@ const sections = getSections(posts);
   .hero-side {
     display: grid;
     gap: 1rem;
-    align-content: end;
+    align-content: start;
   }
 
-  .hero-side div {
+  .signal-card {
     display: grid;
-    gap: 0.25rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--line);
+    gap: 1rem;
+    padding: 1.2rem;
+    border: 1px solid rgba(216, 173, 98, 0.12);
+    border-radius: 1.25rem;
+    background:
+      radial-gradient(circle at top right, rgba(216, 173, 98, 0.12), transparent 40%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   }
 
-  .hero-side div:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
+  .signal-head {
+    display: grid;
+    gap: 0.35rem;
   }
 
-  .hero-side strong {
-    font-size: 1.8rem;
+  .signal-head strong {
+    font-size: 1.4rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .signal-card svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .signal-card svg path {
+    fill: url(#hero-chart-fill);
+  }
+
+  .signal-card svg polyline {
+    fill: none;
+    stroke: url(#hero-chart-stroke);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 10px 18px rgba(216, 173, 98, 0.15));
+  }
+
+  .signal-stats {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .signal-stats div {
+    display: grid;
+    gap: 0.22rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .signal-stats div:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .signal-stats strong {
+    font-size: 1.55rem;
     line-height: 1;
     letter-spacing: -0.05em;
   }
 
-  .hero-side span {
+  .signal-stats span {
     color: var(--muted);
   }
 

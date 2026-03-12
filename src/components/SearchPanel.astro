@@ -1,0 +1,245 @@
+---
+import type { Post } from "../lib/content";
+import { formatDate, sectionLabel } from "../lib/content";
+
+type Props = {
+  id: string;
+  posts: Post[];
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  compact?: boolean;
+  limit?: number;
+};
+
+const {
+  id,
+  posts,
+  eyebrow = "Поиск",
+  title = "Найти по базе",
+  description = "Поиск по заголовкам, описаниям, тегам и разделам.",
+  compact = false,
+  limit = compact ? 4 : 12
+} = Astro.props;
+
+const items = posts.map((post) => ({
+  url: post.url,
+  title: post.title,
+  description: post.description,
+  section: sectionLabel(post.section),
+  tags: post.tags,
+  date: formatDate(post.date),
+  readingTime: post.readingTime,
+  search: [post.title, post.description, sectionLabel(post.section), ...post.tags].join(" ").toLowerCase()
+}));
+---
+
+<section
+  class:list={["search-panel panel", compact && "compact"]}
+  data-search-root
+  data-limit={limit}
+  data-empty-text="Ничего не найдено. Попробуйте другое слово или тег."
+>
+  <div class="search-copy">
+    <span class="eyebrow">{eyebrow}</span>
+    <h2>{title}</h2>
+    <p>{description}</p>
+  </div>
+
+  <label class="search-input" for={`${id}-search`}>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M10.5 4.75a5.75 5.75 0 1 0 0 11.5a5.75 5.75 0 0 0 0-11.5Zm0-1.5a7.25 7.25 0 1 1 4.56 12.88l4.41 4.42l-1.06 1.06L14 17.2a7.25 7.25 0 0 1-3.5.9Z"
+      />
+    </svg>
+    <input id={`${id}-search`} type="search" placeholder="Например: cli, деньги, проект" autocomplete="off" />
+  </label>
+
+  <div class="search-summary" data-search-summary>
+    Показаны все материалы: {items.length}
+  </div>
+
+  <div class="search-results" data-search-results>
+    {items.slice(0, limit).map((item) => (
+      <a class="search-result" href={item.url}>
+        <span class="result-meta">
+          <span>{item.section}</span>
+          <span>{item.date}</span>
+          <span>{item.readingTime} мин</span>
+        </span>
+        <strong>{item.title}</strong>
+        <span>{item.description}</span>
+      </a>
+    ))}
+  </div>
+
+  <template data-search-empty>
+    <div class="search-empty">Ничего не найдено. Попробуйте другое слово или тег.</div>
+  </template>
+
+  <script type="application/json" data-search-data set:html={JSON.stringify(items)} />
+</section>
+
+<script is:inline>
+  document.querySelectorAll("[data-search-root]").forEach((root) => {
+    if (root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
+    const input = root.querySelector("input");
+    const results = root.querySelector("[data-search-results]");
+    const summary = root.querySelector("[data-search-summary]");
+    const emptyTemplate = root.querySelector("[data-search-empty]");
+    const dataNode = root.querySelector("[data-search-data]");
+    const limit = Number(root.dataset.limit || "10");
+
+    if (!input || !results || !summary || !emptyTemplate || !dataNode?.textContent) return;
+
+    const items = JSON.parse(dataNode.textContent);
+    const render = (query) => {
+      const normalized = query.trim().toLowerCase();
+      const filtered = normalized
+        ? items.filter((item) => item.search.includes(normalized))
+        : items;
+
+      const visible = filtered.slice(0, limit);
+      summary.textContent = normalized
+        ? `Найдено: ${filtered.length}`
+        : `Показаны все материалы: ${items.length}`;
+
+      if (visible.length === 0) {
+        results.innerHTML = emptyTemplate.innerHTML;
+        return;
+      }
+
+      results.innerHTML = visible
+        .map(
+          (item) => `
+            <a class="search-result" href="${item.url}">
+              <span class="result-meta">
+                <span>${item.section}</span>
+                <span>${item.date}</span>
+                <span>${item.readingTime} мин</span>
+              </span>
+              <strong>${item.title}</strong>
+              <span>${item.description}</span>
+            </a>
+          `
+        )
+        .join("");
+    };
+
+    input.addEventListener("input", (event) => {
+      render(event.currentTarget.value);
+    });
+  });
+</script>
+
+<style>
+  .search-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1.3rem;
+  }
+
+  .search-copy {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .search-copy h2 {
+    margin: 0;
+    font-size: clamp(1.2rem, 1rem + 0.6vw, 1.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .search-copy p,
+  .search-summary,
+  .search-result > span,
+  .search-empty {
+    color: var(--muted);
+  }
+
+  .search-copy p,
+  .search-summary {
+    margin: 0;
+    font-size: 0.96rem;
+  }
+
+  .search-input {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  .search-input svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: var(--muted);
+    flex: none;
+  }
+
+  .search-input input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    padding: 0;
+    color: var(--text);
+    background: transparent;
+    font: inherit;
+  }
+
+  .search-input input::placeholder {
+    color: color-mix(in srgb, var(--muted) 80%, transparent);
+  }
+
+  .search-results {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .search-result,
+  .search-empty {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .search-result:hover {
+    border-color: rgba(216, 173, 98, 0.26);
+    background: rgba(255, 255, 255, 0.045);
+  }
+
+  .search-result strong {
+    font-size: 1rem;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 0.8rem;
+    font-size: 0.83rem;
+  }
+
+  .compact {
+    padding: 1.15rem;
+  }
+
+  .compact .search-copy h2 {
+    font-size: 1.1rem;
+  }
+
+  .compact .search-copy p {
+    font-size: 0.9rem;
+  }
+</style>

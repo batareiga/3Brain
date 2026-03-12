@@ -5,7 +5,7 @@ export const siteMeta = {
   site: "https://batareiga.github.io",
   basePath: "/3Brain",
   author: "3Brain — Запасной Мозг",
-  socialImage: "/3B.png"
+  socialImage: "/3B (копия).png"
 };
 
 export function withBase(pathname: string): string {
