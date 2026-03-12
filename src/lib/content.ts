@@ -5,6 +5,7 @@ import { withBase } from "./site";
 
 const ROOT_DIR = process.cwd();
 const PUBLISH_DIR = path.join(ROOT_DIR, "3апасной Мозг. Публикации в интернетах");
+const IGNORED_DIRECTORIES = new Set([".obsidian", "Шаблоны"]);
 
 const md = new MarkdownIt({
   html: false,
@@ -48,6 +49,9 @@ function walk(dir: string): string[] {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (IGNORED_DIRECTORIES.has(entry.name)) {
+        return [];
+      }
       return walk(fullPath);
     }
 
@@ -61,7 +65,7 @@ function getTopLevelSections(): string[] {
   }
 
   return fs.readdirSync(PUBLISH_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
+    .filter((entry) => entry.isDirectory() && !IGNORED_DIRECTORIES.has(entry.name) && !entry.name.startsWith("."))
     .map((entry) => slugifySegment(entry.name))
     .filter(Boolean);
 }
@@ -72,7 +76,12 @@ function resolveDirectoryBySlug(parentDir: string, slug: string): string | null 
   }
 
   const match = fs.readdirSync(parentDir, { withFileTypes: true })
-    .find((entry) => entry.isDirectory() && !entry.name.startsWith(".") && slugifySegment(entry.name) === slug);
+    .find((entry) =>
+      entry.isDirectory() &&
+      !IGNORED_DIRECTORIES.has(entry.name) &&
+      !entry.name.startsWith(".") &&
+      slugifySegment(entry.name) === slug
+    );
 
   return match ? path.join(parentDir, match.name) : null;
 }
@@ -309,7 +318,7 @@ export function getSectionSubsections(section: string): string[] {
   }
 
   return fs.readdirSync(directory, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
+    .filter((entry) => entry.isDirectory() && !IGNORED_DIRECTORIES.has(entry.name) && !entry.name.startsWith("."))
     .map((entry) => slugifySegment(entry.name))
     .filter(Boolean);
 }
