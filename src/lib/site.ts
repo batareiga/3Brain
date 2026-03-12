@@ -1,10 +1,10 @@
 export const siteMeta = {
-  title: "Запасной Мозг",
+  title: "3Brain",
   description:
-    "Личный блог и база знаний о практичных инструментах, идеях, цифровых системах и полевых наблюдениях.",
+    "3Brain — личный блог и база знаний о практичных инструментах, идеях, цифровых системах и полевых наблюдениях.",
   site: "https://batareiga.github.io",
   basePath: "/3Brain",
-  author: "Запасной Мозг"
+  author: "3Brain"
 };
 
 export function withBase(pathname: string): string {
