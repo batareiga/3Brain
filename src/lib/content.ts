@@ -15,6 +15,7 @@ const md = new MarkdownIt({
 type Frontmatter = {
   title?: string;
   description?: string;
+  slug?: string;
   date?: string;
   tags?: string[] | string;
   draft?: boolean | string;
@@ -65,8 +66,19 @@ function getTopLevelSections(): string[] {
     .filter(Boolean);
 }
 
+function resolveDirectoryBySlug(parentDir: string, slug: string): string | null {
+  if (!fs.existsSync(parentDir)) {
+    return null;
+  }
+
+  const match = fs.readdirSync(parentDir, { withFileTypes: true })
+    .find((entry) => entry.isDirectory() && !entry.name.startsWith(".") && slugifySegment(entry.name) === slug);
+
+  return match ? path.join(parentDir, match.name) : null;
+}
+
 function getSectionDirectory(section: string): string {
-  return path.join(PUBLISH_DIR, section);
+  return resolveDirectoryBySlug(PUBLISH_DIR, section) ?? path.join(PUBLISH_DIR, section);
 }
 
 function transliterate(value: string): string {
@@ -85,6 +97,22 @@ function transliterate(value: string): string {
 }
 
 function slugifySegment(value: string): string {
+  const normalizedValue = value.replace(/\.md$/i, "").trim().toLowerCase();
+  const overrides: Record<string, string> = {
+    "идеи": "ideas",
+    "деньги": "money",
+    "кэшбэк": "cashback",
+    "проекты": "projects",
+    "инструменты": "tools",
+    "топы": "tops",
+    "сервисы": "services",
+    "инструментарий": "tooling"
+  };
+
+  if (overrides[normalizedValue]) {
+    return overrides[normalizedValue];
+  }
+
   return transliterate(value)
     .replace(/\.md$/i, "")
     .replace(/['"`]/g, "")
@@ -227,8 +255,9 @@ export function getAllPosts(): Post[] {
       const segments = relativePath.split("/");
       const filename = segments.at(-1) ?? "post.md";
       const section = slugifySegment(segments[0] ?? "notes") || "notes";
-      const nestedSegments = segments.slice(1).map(slugifySegment).filter(Boolean);
-      const slug = [section, ...nestedSegments].join("/");
+      const nestedDirectories = segments.slice(1, -1).map(slugifySegment).filter(Boolean);
+      const leafSlug = slugifySegment(data.slug?.trim() || filename) || "post";
+      const slug = [section, ...nestedDirectories, leafSlug].join("/");
       const titleFallback = humanizeFilename(filename);
       const title = data.title?.trim() || extractTitle(content, titleFallback);
       const description = data.description?.trim() || extractDescription(content) || "Материал без описания.";
@@ -327,14 +356,24 @@ export function formatDate(date: string): string {
 
 export function sectionLabel(section: string): string {
   const map: Record<string, string> = {
+    idea: "Идеи",
+    idei: "Идеи",
     tools: "Инструменты",
+    instrumenty: "Инструменты",
     money: "Деньги",
+    dengi: "Деньги",
     ideas: "Идеи",
     life: "Жизнь",
     notes: "Заметки",
+    project: "Проекты",
     projects: "Проекты",
+    proekty: "Проекты",
     partners: "Партнерства",
-    tops: "Топы"
+    topy: "Топы",
+    tops: "Топы",
+    keshbek: "Кэшбэк",
+    servisy: "Сервисы",
+    instrumentariy: "Инструментарий"
   };
 
   return map[section] ?? humanizeFilename(section);
@@ -343,8 +382,12 @@ export function sectionLabel(section: string): string {
 export function subsectionLabel(section: string, subsection: string): string {
   const map: Record<string, Record<string, string>> = {
     tops: {
-      services: "Сервисы",
-      tooling: "Инструментарий"
+      servisy: "Сервисы",
+      instrumentariy: "Инструментарий"
+    },
+    topy: {
+      servisy: "Сервисы",
+      instrumentariy: "Инструментарий"
     }
   };
 
@@ -354,8 +397,12 @@ export function subsectionLabel(section: string, subsection: string): string {
 export function subsectionDescription(section: string, subsection: string): string {
   const map: Record<string, Record<string, string>> = {
     tops: {
-      services: "Подборки сервисов, платформ и утилит с практическим применением.",
-      tooling: "Инструменты, наборы и рабочий стек для конкретных задач."
+      servisy: "Подборки сервисов, платформ и утилит с практическим применением.",
+      instrumentariy: "Инструменты, наборы и рабочий стек для конкретных задач."
+    },
+    topy: {
+      servisy: "Подборки сервисов, платформ и утилит с практическим применением.",
+      instrumentariy: "Инструменты, наборы и рабочий стек для конкретных задач."
     }
   };
 
