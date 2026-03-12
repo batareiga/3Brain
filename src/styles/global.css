@@ -11,6 +11,7 @@
   --max: 1160px;
   --radius: 24px;
   --shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  --measure: 68ch;
 }
 
 * {
@@ -53,7 +54,7 @@ img {
 }
 
 main {
-  padding: 0 1.25rem 4rem;
+  padding: 0 1rem 3.5rem;
 }
 
 .shell {
@@ -113,14 +114,15 @@ button:focus-visible {
 
 .section-heading p {
   margin: 0;
-  max-width: 44rem;
+  max-width: 42rem;
   color: var(--muted);
+  text-wrap: balance;
 }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .cards > * {
@@ -155,33 +157,50 @@ button:focus-visible {
   flex-wrap: wrap;
   gap: 0.75rem 1rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .prose {
-  font-size: 1.05rem;
+  max-width: var(--measure);
+  font-size: clamp(1.02rem, 0.98rem + 0.22vw, 1.16rem);
+  line-height: 1.78;
+  color: rgba(243, 238, 227, 0.94);
 }
 
 .prose h2,
 .prose h3 {
-  margin-top: 2.4rem;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  margin-top: 2.8rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.prose h2 {
+  font-size: clamp(1.7rem, 1.45rem + 0.9vw, 2.3rem);
+}
+
+.prose h3 {
+  font-size: clamp(1.35rem, 1.2rem + 0.45vw, 1.7rem);
 }
 
 .prose p,
 .prose ul,
 .prose ol,
 .prose blockquote {
-  margin: 1rem 0;
+  margin: 1.05rem 0;
 }
 
 .prose a {
   color: var(--accent-soft);
+  text-decoration: underline;
+  text-decoration-color: rgba(242, 211, 157, 0.34);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
 }
 
 .prose code {
-  padding: 0.12rem 0.35rem;
+  padding: 0.16rem 0.38rem;
   border-radius: 0.4rem;
   background: rgba(255, 255, 255, 0.06);
   font-size: 0.92em;
@@ -189,8 +208,8 @@ button:focus-visible {
 
 .prose pre {
   overflow-x: auto;
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: 1rem 1.05rem;
+  border-radius: 1.15rem;
   background: rgba(0, 0, 0, 0.28);
 }
 
@@ -200,9 +219,27 @@ button:focus-visible {
   color: var(--muted);
 }
 
+.prose ul,
+.prose ol {
+  padding-left: 1.2rem;
+}
+
+.prose li + li {
+  margin-top: 0.45rem;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
 @media (min-width: 760px) {
   main {
     padding-inline: 2rem;
+    padding-bottom: 4.5rem;
   }
 
   .cards > *.span-4 {
@@ -215,5 +252,34 @@ button:focus-visible {
 
   .cards > *.span-8 {
     grid-column: span 8;
+  }
+}
+
+@media (max-width: 759px) {
+  .section-heading {
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-heading h1,
+  .section-heading h2 {
+    font-size: clamp(1.75rem, 8vw, 2.35rem);
+  }
+
+  .cards {
+    gap: 0.85rem;
+  }
+
+  .pill-list {
+    gap: 0.55rem;
+  }
+
+  .prose {
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+
+  .prose h2 {
+    margin-top: 2.35rem;
   }
 }
