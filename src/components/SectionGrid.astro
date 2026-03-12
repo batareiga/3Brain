@@ -25,12 +25,13 @@ const { sections } = Astro.props;
     padding: 1.35rem;
     min-height: 11rem;
     align-content: end;
-    transition: transform 180ms ease, border-color 180ms ease;
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
   }
 
   .section-card:hover {
-    transform: translateY(-3px);
     border-color: rgba(216, 173, 98, 0.35);
+    background: rgba(255, 248, 232, 0.055);
+    box-shadow: inset 0 0 0 1px rgba(216, 173, 98, 0.06);
   }
 
   .section-card strong {

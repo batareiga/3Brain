@@ -6,6 +6,7 @@ import { withBase } from "../lib/site";
 <BaseLayout title="Страница не найдена" description="Такой страницы здесь нет.">
   <section class="shell lost panel">
     <span class="eyebrow">404</span>
+    <img src={withBase("/3B.png")} alt="3Brain" />
     <h1>Страница не найдена</h1>
     <p>Либо материал ещё не опубликован, либо адрес изменился.</p>
     <a href={withBase("/archive/")}>Перейти в архив</a>
@@ -19,6 +20,14 @@ import { withBase } from "../lib/site";
     margin-top: 2rem;
     padding: 1.8rem;
     place-items: start;
+  }
+
+  .lost img {
+    width: clamp(92px, 18vw, 150px);
+    height: auto;
+    border-radius: 1.4rem;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
   }
 
   .lost h1,

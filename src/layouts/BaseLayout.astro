@@ -19,6 +19,7 @@ const {
 
 const fullTitle = title === siteMeta.title ? title : `${title} | ${siteMeta.title}`;
 const canonical = absoluteUrl(pathname);
+const socialImage = absoluteUrl(withBase(siteMeta.socialImage));
 ---
 
 <!doctype html>
@@ -35,7 +36,13 @@ const canonical = absoluteUrl(pathname);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={siteMeta.title} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content={siteMeta.title} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="theme-color" content="#111315" />
+    <link rel="icon" type="image/png" href={withBase("/3B.png")} />
+    <link rel="apple-touch-icon" href={withBase("/3B.png")} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link
