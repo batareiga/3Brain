@@ -1,5 +1,6 @@
 ---
 import { sectionLabel } from "../lib/content";
+import { withBase } from "../lib/site";
 
 type Props = {
   sections: string[];
@@ -10,7 +11,7 @@ const { sections } = Astro.props;
 
 <div class="cards">
   {sections.map((section) => (
-    <a class="section-card panel span-4" href={`/${section}/`}>
+    <a class="section-card panel span-4" href={withBase(`/${section}/`)}>
       <strong>{sectionLabel(section)}</strong>
       <span>Материалы, заметки и опорные записи по теме.</span>
     </a>

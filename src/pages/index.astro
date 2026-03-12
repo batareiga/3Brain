@@ -9,6 +9,7 @@ import {
   getSections,
   sectionLabel
 } from "../lib/content";
+import { withBase } from "../lib/site";
 
 const posts = getAllPosts();
 const recent = getRecentPosts(posts, 6);
@@ -26,8 +27,8 @@ const sections = getSections(posts);
         заработка, заметки по проектам, идеи, подборки и короткие полевые записи.
       </p>
       <div class="hero-actions">
-        <a class="primary" href="/archive/">Открыть архив</a>
-        <a class="secondary" href="/about/">Что это за место</a>
+        <a class="primary" href={withBase("/archive/")}>Открыть архив</a>
+        <a class="secondary" href={withBase("/about/")}>Что это за место</a>
       </div>
     </div>
     <div class="hero-side panel">

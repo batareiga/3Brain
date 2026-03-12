@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
+import { withBase } from "./site";
 
 const ROOT_DIR = process.cwd();
 const PUBLISH_DIR = path.join(ROOT_DIR, "publish");
@@ -228,7 +229,7 @@ export function getAllPosts(): Post[] {
         description,
         section,
         slug,
-        url: `/${slug}/`,
+        url: withBase(`/${slug}/`),
         rawContent: content,
         html: md.render(content),
         tags,

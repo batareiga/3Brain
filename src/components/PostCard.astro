@@ -1,6 +1,7 @@
 ---
 import type { Post } from "../lib/content";
 import { formatDate, sectionLabel } from "../lib/content";
+import { withBase } from "../lib/site";
 
 type Props = {
   post: Post;
@@ -21,7 +22,7 @@ const { post, className = "span-4" } = Astro.props;
   {post.tags.length > 0 && (
     <div class="tags">
       {post.tags.slice(0, 3).map((tag) => (
-        <a class="pill" href={`/tags/${tag}/`}>#{tag}</a>
+        <a class="pill" href={withBase(`/tags/${tag}/`)}>#{tag}</a>
       ))}
     </div>
   )}

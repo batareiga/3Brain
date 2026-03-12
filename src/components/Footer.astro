@@ -1,12 +1,16 @@
+---
+import { withBase } from "../lib/site";
+---
+
 <footer class="site-footer">
   <div class="shell footer-grid">
     <p>
       Запасной Мозг. Практичные материалы без витринного шума.
     </p>
     <div class="links">
-      <a href="/rss.xml">RSS</a>
-      <a href="/archive/">Архив</a>
-      <a href="/about/">О проекте</a>
+      <a href={withBase("/rss.xml")}>RSS</a>
+      <a href={withBase("/archive/")}>Архив</a>
+      <a href={withBase("/about/")}>О проекте</a>
     </div>
   </div>
 </footer>

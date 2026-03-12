@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatDate, getAllPosts, getRelatedPosts, sectionLabel } from "../../lib/content";
 import PostCard from "../../components/PostCard.astro";
 import { absoluteUrl } from "../../lib/seo";
+import { withBase } from "../../lib/site";
 
 export function getStaticPaths() {
   const posts = getAllPosts();
@@ -51,7 +52,7 @@ const articleSchema = {
       {post.tags.length > 0 && (
         <div class="pill-list">
           {post.tags.map((tag) => (
-            <a class="pill" href={`/tags/${tag}/`}>#{tag}</a>
+            <a class="pill" href={withBase(`/tags/${tag}/`)}>#{tag}</a>
           ))}
         </div>
       )}
