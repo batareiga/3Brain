@@ -90,6 +90,11 @@ function getSectionDirectory(section: string): string {
   return resolveDirectoryBySlug(PUBLISH_DIR, section) ?? path.join(PUBLISH_DIR, section);
 }
 
+function getDisplayNameBySlug(parentDir: string, slug: string): string | null {
+  const directory = resolveDirectoryBySlug(parentDir, slug);
+  return directory ? path.basename(directory) : null;
+}
+
 function transliterate(value: string): string {
   const map: Record<string, string> = {
     а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z",
@@ -385,7 +390,7 @@ export function sectionLabel(section: string): string {
     instrumentariy: "Инструментарий"
   };
 
-  return map[section] ?? humanizeFilename(section);
+  return map[section] ?? getDisplayNameBySlug(PUBLISH_DIR, section) ?? humanizeFilename(section);
 }
 
 export function subsectionLabel(section: string, subsection: string): string {
@@ -400,7 +405,9 @@ export function subsectionLabel(section: string, subsection: string): string {
     }
   };
 
-  return map[section]?.[subsection] ?? sectionLabel(subsection);
+  return map[section]?.[subsection]
+    ?? getDisplayNameBySlug(getSectionDirectory(section), subsection)
+    ?? sectionLabel(subsection);
 }
 
 export function subsectionDescription(section: string, subsection: string): string {
