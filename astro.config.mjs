@@ -2,8 +2,7 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  site: "https://batareiga.github.io",
-  base: "/3Brain",
+  site: "https://3brain.ru",
   integrations: [sitemap()],
   trailingSlash: "always"
 });

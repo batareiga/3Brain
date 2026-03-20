@@ -2,8 +2,8 @@ export const siteMeta = {
   title: "3Brain — Запасной Мозг",
   description:
     "3Brain — Запасной Мозг. Личный блог и база знаний о практичных инструментах, идеях, цифровых системах и полевых наблюдениях.",
-  site: "https://batareiga.github.io",
-  basePath: "/3Brain",
+  site: "https://3brain.ru",
+  basePath: "/",
   author: "3Brain — Запасной Мозг",
   socialImage: "/3B (копия).png"
 };
