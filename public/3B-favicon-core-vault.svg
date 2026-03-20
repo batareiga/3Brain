@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<rect width="256" height="256" rx="56" fill="#121417"/>
+<path d="M128 42C177 42 214 79 214 128C214 177 177 214 128 214C79 214 42 177 42 128C42 79 79 42 128 42Z" stroke="#E8B75B" fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+<path d="M87 93C93 77 107 66 123 66C135 66 145 72 152 81C157 77 164 75 172 75C190 75 204 89 204 107C204 118 199 127 191 133C194 138 196 144 196 151C196 171 180 187 160 187C148 187 138 182 131 174C125 179 117 182 108 182C89 182 74 167 74 148C74 139 78 130 85 124C79 118 76 110 76 101C76 82 91 67 110 67" stroke="#E8B75B" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+<line x1="96" y1="114" x2="127" y2="88" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="127" y1="88" x2="162" y2="108" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="127" y1="88" x2="156" y2="148" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="96" y1="114" x2="122" y2="164" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="122" y1="164" x2="156" y2="148" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="96" y1="114" x2="91" y2="144" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<line x1="91" y1="144" x2="122" y2="164" stroke="#E8B75B" stroke-width="8" stroke-linecap="round" opacity="0.95"/>
+<circle cx="96" cy="114" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="127" cy="88" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="162" cy="108" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="156" cy="148" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="122" cy="164" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="91" cy="144" r="8" fill="#E8B75B" opacity="1"/>
+<circle cx="128" cy="128" r="13" fill="#E8B75B" opacity="1"/>
+<line x1="127" y1="88" x2="128" y2="128" stroke="#E8B75B" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+<line x1="122" y1="164" x2="128" y2="128" stroke="#E8B75B" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+<line x1="162" y1="108" x2="128" y2="128" stroke="#E8B75B" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+</svg>
