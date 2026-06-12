@@ -18,6 +18,20 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 </div>
 
 <div id="protected-content" style="display:none">
+  <header class="article-head">
+    <span class="eyebrow">Инструменты</span>
+    <!-- h1 только внутри контента — без дубля -->
+    <div class="meta">
+      <span>Июнь 2026</span>
+      <span>~30 мин чтения</span>
+    </div>
+    <div class="pill-list">
+      <span class="pill">#инструменты</span>
+      <span class="pill">#distributed</span>
+      <span class="pill">#devops</span>
+      <span class="pill">#секретно</span>
+    </div>
+  </header>
   <div id="decrypted-body" class="ba-content"></div>
 </div>
 
@@ -62,6 +76,42 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     min-width: 0;
   }
 
+  .article-head {
+    display: grid;
+    gap: 0.6rem;
+    max-width: 100%;
+    min-width: 0;
+    margin-bottom: 0.5rem;
+  }
+  .article-head .eyebrow {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent, #d8ad62);
+    font-weight: 600;
+  }
+  .article-head .meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    color: var(--muted, #999);
+    font-size: 0.8rem;
+  }
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .pill {
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--line, #333);
+    font-size: 0.72rem;
+    color: var(--muted, #999);
+    white-space: nowrap;
+  }
+
   #decrypted-body.ba-content {
     max-width: 100% !important;
     width: 100%;
@@ -87,115 +137,75 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   #decrypted-body.ba-content h3 { font-size: 1rem; }
   #decrypted-body.ba-content p { margin: 0.5em 0; }
   #decrypted-body.ba-content blockquote {
-    margin: 0.6rem 0;
-    padding: 0.4rem 0.6rem;
+    margin: 0.6rem 0; padding: 0.4rem 0.6rem;
     border-left: 3px solid var(--accent, #d8ad62);
     background: rgba(255,255,255,0.025);
     border-radius: 0 0.35rem 0.35rem 0;
-    color: var(--muted, #bbb);
-    font-style: italic;
-    font-size: 0.88rem;
+    color: var(--muted, #bbb); font-style: italic; font-size: 0.88rem;
   }
-  #decrypted-body.ba-content ul,
-  #decrypted-body.ba-content ol {
-    padding-left: 1.1rem;
-    margin: 0.4rem 0;
+  #decrypted-body.ba-content ul, #decrypted-body.ba-content ol {
+    padding-left: 1.1rem; margin: 0.4rem 0;
   }
   #decrypted-body.ba-content li { margin: 0.2rem 0; }
   #decrypted-body.ba-content hr {
-    border: none;
-    border-top: 1px solid var(--line, #333);
-    margin: 1rem 0;
+    border: none; border-top: 1px solid var(--line, #333); margin: 1rem 0;
   }
   #decrypted-body.ba-content a {
-    color: var(--accent, #d8ad62);
-    text-decoration: underline;
-    word-break: break-all;
+    color: var(--accent, #d8ad62); text-decoration: underline; word-break: break-all;
   }
   #decrypted-body.ba-content img {
-    max-width: 100% !important;
-    height: auto;
-    border-radius: 0.5rem;
-    margin: 0.8rem 0;
+    max-width: 100% !important; height: auto;
+    border-radius: 0.5rem; margin: 0.8rem 0;
   }
   #decrypted-body.ba-content pre {
-    overflow-x: auto;
-    max-width: 100%;
-    font-size: 0.78rem;
-    padding: 0.7rem;
-    border-radius: 0.5rem;
-    background: rgba(0,0,0,0.2);
-    line-height: 1.35;
-    margin: 0.6rem 0;
+    overflow-x: auto; max-width: 100%; font-size: 0.78rem;
+    padding: 0.7rem; border-radius: 0.5rem;
+    background: rgba(0,0,0,0.2); line-height: 1.35; margin: 0.6rem 0;
   }
-  #decrypted-body.ba-content code {
-    font-size: 0.78rem;
-    word-break: break-all;
-  }
-  #decrypted-body.ba-content pre code {
-    word-break: normal;
-  }
+  #decrypted-body.ba-content code { font-size: 0.78rem; word-break: break-all; }
+  #decrypted-body.ba-content pre code { word-break: normal; }
 
   #decrypted-body.ba-content table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100%;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.78rem;
-    margin: 0.8rem 0;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
+    display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    max-width: 100%; width: 100%;
+    border-collapse: collapse; font-size: 0.78rem;
+    margin: 0.8rem 0; word-break: break-word;
+    overflow-wrap: break-word; white-space: normal;
   }
   #decrypted-body.ba-content table th {
     background: rgba(255,255,255,0.05);
-    padding: 0.35rem 0.4rem;
-    border: 1px solid var(--line, #333);
-    text-align: left;
-    font-weight: 700;
+    padding: 0.35rem 0.4rem; border: 1px solid var(--line, #333);
+    text-align: left; font-weight: 700;
   }
   #decrypted-body.ba-content table td {
-    padding: 0.3rem 0.4rem;
-    border: 1px solid var(--line, #333);
+    padding: 0.3rem 0.4rem; border: 1px solid var(--line, #333);
     vertical-align: top;
   }
-  #decrypted-body.ba-content table tr:nth-child(even) {
-    background: rgba(255,255,255,0.02);
-  }
+  #decrypted-body.ba-content table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
 
   @media (min-width: 768px) {
-    #protected-content {
-      gap: 1.5rem;
-      max-width: 860px;
-    }
+    #protected-content { gap: 1.5rem; max-width: 860px; }
+    .article-head { gap: 0.8rem; }
+    .article-head .meta { font-size: 0.85rem; }
     #decrypted-body.ba-content {
       padding: 1.5rem 1.8rem;
       background:
         linear-gradient(180deg, rgba(255, 248, 232, 0.03), rgba(255, 248, 232, 0.01)),
         var(--panel, #1a1a1e);
       border-radius: 1rem;
-      font-size: 0.95rem;
-      line-height: 1.7;
+      font-size: 0.95rem; line-height: 1.7;
       overflow-x: visible;
     }
     #decrypted-body.ba-content h1 { font-size: 1.6rem; }
     #decrypted-body.ba-content h2 { font-size: 1.3rem; }
     #decrypted-body.ba-content h3 { font-size: 1.1rem; }
-    #decrypted-body.ba-content table {
-      font-size: 0.85rem;
-      white-space: nowrap;
-    }
+    #decrypted-body.ba-content table { font-size: 0.85rem; white-space: nowrap; }
     #decrypted-body.ba-content table th,
     #decrypted-body.ba-content table td { padding: 0.45rem 0.6rem; }
     #decrypted-body.ba-content pre,
     #decrypted-body.ba-content code { font-size: 0.85rem; }
   }
-
-  @media (min-width: 1000px) {
-    #protected-content { max-width: 920px; }
-  }
+  @media (min-width: 1000px) { #protected-content { max-width: 920px; } }
 </style>
 
 <script>
@@ -259,9 +269,8 @@ els.form.addEventListener("submit", async (e) => {
       els.btn.disabled = false; els.btn.textContent = "Открыть";
       return;
     }
-    // Decrypt and strip duplicate first h1 from content
     let html = await decryptContent(pw);
-    // h1 stays in content — no duplicate header above
+    // h1 stays in content — no duplicate in static header above
     els.body.innerHTML = html;
     els.lock.style.display = "none";
     els.content.style.display = "grid";
