@@ -261,7 +261,7 @@ els.form.addEventListener("submit", async (e) => {
     }
     // Decrypt and strip duplicate first h1 from content
     let html = await decryptContent(pw);
-    html = html.replace(/^<h1>.*?<\/h1>\n*/i, '');
+    // h1 stays in content — no duplicate header above
     els.body.innerHTML = html;
     els.lock.style.display = "none";
     els.content.style.display = "grid";
