@@ -65,51 +65,58 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
   /* ===== ARTICLE LAYOUT ===== */
   #protected-content {
-    display: grid; gap: 1.25rem;
+    display: grid; gap: 1rem;
     margin: 0 auto;
     width: 100%;
     max-width: 100%;
+    /* CRITICAL: prevent grid children from overflowing */
+    min-width: 0;
   }
 
   .article-head {
-    display: grid; gap: 0.6rem;
+    display: grid; gap: 0.5rem;
     max-width: 100%;
+    min-width: 0;
   }
   .article-head h1 {
     margin: 0;
-    font-size: 1.5rem;
-    line-height: 1.05;
+    font-size: 1.4rem;
+    line-height: 1.08;
     letter-spacing: -0.03em;
     word-break: break-word;
+    overflow-wrap: break-word;
   }
   .meta {
     display: flex; gap: 0.5rem; flex-wrap: wrap;
     color: var(--muted, #999); font-size: 0.8rem;
   }
 
-  /* ===== DECRYPTED CONTENT (innerHTML) ===== */
+  /* ===== DECRYPTED BODY — innerHTML ===== */
   #decrypted-body.ba-content {
-    /* remove site's .prose max-width interference */
     max-width: 100% !important;
     width: 100%;
+    min-width: 0;
+    /* overflow-x clips anything that escapes */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 0;
     background: none;
-    font-size: 0.92rem;
-    line-height: 1.65;
+    font-size: 0.9rem;
+    line-height: 1.6;
     overflow-wrap: break-word;
     word-break: break-word;
   }
   #decrypted-body.ba-content h1,
   #decrypted-body.ba-content h2,
   #decrypted-body.ba-content h3 {
-    margin: 1.2em 0 0.5em;
+    margin: 1.1em 0 0.45em;
     line-height: 1.2;
     font-weight: 700;
   }
-  #decrypted-body.ba-content h1 { font-size: 1.35rem; }
-  #decrypted-body.ba-content h2 { font-size: 1.15rem; }
-  #decrypted-body.ba-content h3 { font-size: 1.05rem; }
-  #decrypted-body.ba-content p { margin: 0.6em 0; }
+  #decrypted-body.ba-content h1 { font-size: 1.3rem; }
+  #decrypted-body.ba-content h2 { font-size: 1.1rem; }
+  #decrypted-body.ba-content h3 { font-size: 1rem; }
+  #decrypted-body.ba-content p { margin: 0.5em 0; }
   #decrypted-body.ba-content blockquote {
     margin: 0.6rem 0;
     padding: 0.4rem 0.6rem;
@@ -118,18 +125,18 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     border-radius: 0 0.35rem 0.35rem 0;
     color: var(--muted, #bbb);
     font-style: italic;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
   #decrypted-body.ba-content ul,
   #decrypted-body.ba-content ol {
-    padding-left: 1.2rem;
+    padding-left: 1.1rem;
     margin: 0.4rem 0;
   }
   #decrypted-body.ba-content li { margin: 0.2rem 0; }
   #decrypted-body.ba-content hr {
     border: none;
     border-top: 1px solid var(--line, #333);
-    margin: 1.2rem 0;
+    margin: 1rem 0;
   }
   #decrypted-body.ba-content a {
     color: var(--accent, #d8ad62);
@@ -160,7 +167,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     word-break: normal;
   }
 
-  /* ===== TABLES — responsive ===== */
+  /* ===== TABLES — CRITICAL FIXES ===== */
   #decrypted-body.ba-content table {
     display: block;
     overflow-x: auto;
@@ -170,8 +177,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     border-collapse: collapse;
     font-size: 0.78rem;
     margin: 0.8rem 0;
-    /* NO white-space: nowrap — let cells wrap */
     word-break: break-word;
+    overflow-wrap: break-word;
+    /* Don't force single-line — allow wrapping */
+    white-space: normal;
   }
   #decrypted-body.ba-content table th {
     background: rgba(255,255,255,0.05);
@@ -189,30 +198,24 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     background: rgba(255,255,255,0.02);
   }
 
-  /* ===== RESPONSIVE ===== */
-  @media (min-width: 480px) {
-    .article-head h1 { font-size: 1.7rem; letter-spacing: -0.04em; }
-    #decrypted-body.ba-content { font-size: 0.95rem; }
-    #decrypted-body.ba-content table { font-size: 0.82rem; }
-    #decrypted-body.ba-content table th,
-    #decrypted-body.ba-content table td { padding: 0.4rem 0.5rem; }
-  }
-
+  /* ===== DESKTOP ===== */
   @media (min-width: 768px) {
     #protected-content {
       gap: 1.5rem;
       max-width: 860px;
     }
+    .article-head { gap: 0.7rem; }
     .article-head h1 { font-size: 2.2rem; }
     .meta { font-size: 0.85rem; }
     #decrypted-body.ba-content {
-      padding: 1.5rem;
+      padding: 1.5rem 1.8rem;
       background:
         linear-gradient(180deg, rgba(255, 248, 232, 0.03), rgba(255, 248, 232, 0.01)),
         var(--panel, #1a1a1e);
       border-radius: 1rem;
-      font-size: 0.98rem;
+      font-size: 0.95rem;
       line-height: 1.7;
+      overflow-x: visible;
     }
     #decrypted-body.ba-content h1 { font-size: 1.6rem; }
     #decrypted-body.ba-content h2 { font-size: 1.3rem; }
@@ -223,7 +226,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     }
     #decrypted-body.ba-content table th,
     #decrypted-body.ba-content table td { padding: 0.45rem 0.6rem; }
-    #decrypted-body.ba-content pre { font-size: 0.85rem; }
+    #decrypted-body.ba-content pre,
     #decrypted-body.ba-content code { font-size: 0.85rem; }
   }
 
