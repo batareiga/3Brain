@@ -18,21 +18,12 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 </div>
 
 <div id="protected-content" style="display:none">
-  <header class="article-head">
-    <span class="eyebrow">Секретно</span>
-    <h1>Чёрная сборка: как собрать что угодно из ничего</h1>
-    <div class="meta">
-      <span>Июнь 2026</span>
-      <span>~30 мин чтения</span>
-    </div>
-  </header>
   <div id="decrypted-body" class="ba-content"></div>
 </div>
 
 </BaseLayout>
 
 <style is:global>
-  /* ===== LOCK SCREEN ===== */
   .lock-shell {
     display: flex; align-items: center; justify-content: center;
     min-height: 70vh; padding: 2rem 1rem;
@@ -63,40 +54,18 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   .lock-form button:disabled { opacity: 0.4; cursor: not-allowed; }
   .lock-error { color: #e74c3c; font-size: 0.88rem; min-height: 1.3rem; }
 
-  /* ===== ARTICLE LAYOUT ===== */
   #protected-content {
     display: grid; gap: 1rem;
     margin: 0 auto;
     width: 100%;
     max-width: 100%;
-    /* CRITICAL: prevent grid children from overflowing */
     min-width: 0;
   }
 
-  .article-head {
-    display: grid; gap: 0.5rem;
-    max-width: 100%;
-    min-width: 0;
-  }
-  .article-head h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    line-height: 1.08;
-    letter-spacing: -0.03em;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-  .meta {
-    display: flex; gap: 0.5rem; flex-wrap: wrap;
-    color: var(--muted, #999); font-size: 0.8rem;
-  }
-
-  /* ===== DECRYPTED BODY — innerHTML ===== */
   #decrypted-body.ba-content {
     max-width: 100% !important;
     width: 100%;
     min-width: 0;
-    /* overflow-x clips anything that escapes */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding: 0;
@@ -167,7 +136,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     word-break: normal;
   }
 
-  /* ===== TABLES — CRITICAL FIXES ===== */
   #decrypted-body.ba-content table {
     display: block;
     overflow-x: auto;
@@ -179,7 +147,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     margin: 0.8rem 0;
     word-break: break-word;
     overflow-wrap: break-word;
-    /* Don't force single-line — allow wrapping */
     white-space: normal;
   }
   #decrypted-body.ba-content table th {
@@ -198,15 +165,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     background: rgba(255,255,255,0.02);
   }
 
-  /* ===== DESKTOP ===== */
   @media (min-width: 768px) {
     #protected-content {
       gap: 1.5rem;
       max-width: 860px;
     }
-    .article-head { gap: 0.7rem; }
-    .article-head h1 { font-size: 2.2rem; }
-    .meta { font-size: 0.85rem; }
     #decrypted-body.ba-content {
       padding: 1.5rem 1.8rem;
       background:
@@ -296,7 +259,10 @@ els.form.addEventListener("submit", async (e) => {
       els.btn.disabled = false; els.btn.textContent = "Открыть";
       return;
     }
-    els.body.innerHTML = await decryptContent(pw);
+    // Decrypt and strip duplicate first h1 from content
+    let html = await decryptContent(pw);
+    html = html.replace(/^<h1>.*?<\/h1>\n*/i, '');
+    els.body.innerHTML = html;
     els.lock.style.display = "none";
     els.content.style.display = "grid";
   } catch (err) {
