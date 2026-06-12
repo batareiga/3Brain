@@ -17,23 +17,22 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   </div>
 </div>
 
-<div id="protected-content" class="shell article" style="display:none">
-  <article class="shell article">
-    <header class="article-head">
-      <span class="eyebrow">Секретно</span>
-      <h1>Чёрная сборка: как собрать что угодно из ничего</h1>
-      <div class="meta">
-        <span>Июнь 2026</span>
-        <span>~30 мин чтения</span>
-      </div>
-    </header>
-    <div id="decrypted-body" class="article-body panel prose"></div>
-  </article>
+<div id="protected-content" style="display:none">
+  <header class="article-head">
+    <span class="eyebrow">Секретно</span>
+    <h1>Чёрная сборка: как собрать что угодно из ничего</h1>
+    <div class="meta">
+      <span>Июнь 2026</span>
+      <span>~30 мин чтения</span>
+    </div>
+  </header>
+  <div id="decrypted-body" class="prose"></div>
 </div>
 
 </BaseLayout>
 
-<style is:global>
+<style>
+  /* Lock screen — scoped, fine because static HTML */
   .lock-shell {
     display: flex; align-items: center; justify-content: center;
     min-height: 70vh; padding: 2rem 1rem;
@@ -64,54 +63,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   .lock-form button:disabled { opacity: 0.4; cursor: not-allowed; }
   .lock-error { color: #e74c3c; font-size: 0.88rem; min-height: 1.3rem; }
 
-  #protected-content.article {
-    display: grid; gap: 1.5rem; padding-top: 1rem;
+  #protected-content {
+    display: grid; gap: 1.5rem; padding: 1rem 0.75rem;
+    max-width: 100%;
   }
   .article-head {
     display: grid; gap: 0.8rem; max-width: 100%;
-    padding: 0 0.5rem;
+    padding: 0;
   }
   .article-head h1 {
-    margin: 0; font-size: clamp(1.8rem, 6vw, 4rem);
+    margin: 0;
+    font-size: clamp(1.5rem, 5vw, 3.8rem);
     line-height: 0.95; letter-spacing: -0.04em;
     word-break: break-word;
-  }
-  .article-body {
-    padding: 1rem;
-    background:
-      linear-gradient(180deg, rgba(255, 248, 232, 0.028), rgba(255, 248, 232, 0.012)),
-      var(--panel, #1a1a1e);
-    border-radius: 1rem;
-    overflow-x: auto;
-    max-width: 100%;
-  }
-  .article-body :global(table) {
-    display: block; overflow-x: auto; max-width: 100%;
-    border-collapse: collapse; font-size: 0.85rem;
-    margin: 1rem 0; white-space: nowrap;
-  }
-  .article-body :global(table th) {
-    background: rgba(255,255,255,0.05); padding: 0.5rem 0.6rem;
-    border: 1px solid var(--line, #333);
-    text-align: left; font-weight: 700;
-  }
-  .article-body :global(table td) {
-    padding: 0.45rem 0.6rem; border: 1px solid var(--line, #333);
-    vertical-align: top;
-  }
-  .article-body :global(table tr:nth-child(even)) {
-    background: rgba(255,255,255,0.02);
-  }
-  .article-body :global(pre) {
-    overflow-x: auto; max-width: 100%;
-    font-size: 0.82rem; padding: 0.8rem;
-    border-radius: 0.6rem;
-  }
-  .article-body :global(code) {
-    word-break: break-all;
-  }
-  .article-body :global(img) {
-    max-width: 100%; height: auto;
   }
   .meta {
     display: flex; gap: 0.8rem; flex-wrap: wrap;
@@ -119,10 +83,117 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   }
 
   @media (min-width: 768px) {
-    #protected-content.article { gap: 1.75rem; padding-top: 1.35rem; }
-    .article-head { gap: 1.1rem; padding: 0; }
-    .article-body { padding: 1.8rem 2rem; border-radius: 0; }
-    .article-body :global(table) { font-size: 0.9rem; }
+    #protected-content {
+      gap: 1.75rem; padding: 1.35rem 1rem;
+    }
+    .article-head { gap: 1.1rem; }
+    .article-head h1 { font-size: clamp(2rem, 6vw, 4.2rem); }
+  }
+</style>
+
+<style is:global>
+  /* Global styles for innerHTML content — NOT scoped */
+  #decrypted-body.prose {
+    padding: 1rem;
+    background:
+      linear-gradient(180deg, rgba(255, 248, 232, 0.028), rgba(255, 248, 232, 0.012)),
+      var(--panel, #1a1a1e);
+    border-radius: 1rem;
+    max-width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+  }
+  #decrypted-body.prose h1, #decrypted-body.prose h2, #decrypted-body.prose h3 {
+    margin: 1.5em 0 0.6em;
+    line-height: 1.2;
+  }
+  #decrypted-body.prose h1 { font-size: 1.6rem; }
+  #decrypted-body.prose h2 { font-size: 1.3rem; }
+  #decrypted-body.prose h3 { font-size: 1.1rem; }
+  #decrypted-body.prose p { margin: 0.7em 0; }
+  #decrypted-body.prose blockquote {
+    margin: 0.8rem 0;
+    padding: 0.5rem 0.8rem;
+    border-left: 3px solid var(--accent, #d8ad62);
+    background: rgba(255,255,255,0.03);
+    border-radius: 0 0.4rem 0.4rem 0;
+    color: var(--muted, #999);
+    font-style: italic;
+  }
+  #decrypted-body.prose ul, #decrypted-body.prose ol {
+    padding-left: 1.2rem;
+    margin: 0.5rem 0;
+  }
+  #decrypted-body.prose li { margin: 0.3rem 0; }
+  #decrypted-body.prose hr {
+    border: none; border-top: 1px solid var(--line, #333);
+    margin: 1.5rem 0;
+  }
+  #decrypted-body.prose a { color: var(--accent, #d8ad62); text-decoration: underline; }
+  #decrypted-body.prose a:hover { opacity: 0.8; }
+  #decrypted-body.prose img {
+    max-width: 100%; height: auto;
+    border-radius: 0.5rem; margin: 1rem 0;
+  }
+  #decrypted-body.prose pre {
+    overflow-x: auto; max-width: 100%;
+    font-size: 0.82rem; padding: 0.8rem;
+    border-radius: 0.6rem;
+    background: rgba(0,0,0,0.25);
+    line-height: 1.4;
+  }
+  #decrypted-body.prose code {
+    font-size: 0.82rem;
+    word-break: break-all;
+  }
+  #decrypted-body.prose pre code {
+    word-break: normal;
+  }
+  /* TABLES — responsive */
+  #decrypted-body.prose table {
+    display: block; overflow-x: auto; max-width: 100%;
+    border-collapse: collapse; font-size: 0.82rem;
+    margin: 1rem 0;
+    white-space: nowrap;
+  }
+  #decrypted-body.prose table th {
+    background: rgba(255,255,255,0.06);
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--line, #333);
+    text-align: left; font-weight: 700;
+  }
+  #decrypted-body.prose table td {
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--line, #333);
+    vertical-align: top;
+  }
+  #decrypted-body.prose table tr:nth-child(even) {
+    background: rgba(255,255,255,0.02);
+  }
+
+  @media (min-width: 768px) {
+    #decrypted-body.prose {
+      padding: 1.8rem 2rem;
+      border-radius: 0;
+      font-size: 1rem;
+    }
+    #decrypted-body.prose table { font-size: 0.88rem; }
+    #decrypted-body.prose table th,
+    #decrypted-body.prose table td {
+      padding: 0.5rem 0.7rem;
+    }
+    #decrypted-body.prose h1 { font-size: 2rem; }
+    #decrypted-body.prose h2 { font-size: 1.5rem; }
+    #decrypted-body.prose h3 { font-size: 1.2rem; }
+  }
+
+  /* Container width limit */
+  @media (min-width: 1000px) {
+    #protected-content {
+      max-width: 920px;
+      margin: 0 auto;
+    }
   }
 </style>
 
@@ -140,13 +211,15 @@ const IV = b64ToBytes(ENCRYPTED.iv);
 const TAG = b64ToBytes(ENCRYPTED.tag);
 const DATA = b64ToBytes(ENCRYPTED.data);
 
-const lockScreen = document.getElementById("lock-screen");
-const protectedContent = document.getElementById("protected-content");
-const decryptedBody = document.getElementById("decrypted-body");
-const form = document.getElementById("unlock-form");
-const input = document.getElementById("password-input");
-const btn = document.getElementById("unlock-btn");
-const errorMsg = document.getElementById("error-msg");
+const els = {
+  lock: document.getElementById("lock-screen"),
+  content: document.getElementById("protected-content"),
+  body: document.getElementById("decrypted-body"),
+  form: document.getElementById("unlock-form"),
+  input: document.getElementById("password-input"),
+  btn: document.getElementById("unlock-btn"),
+  error: document.getElementById("error-msg")
+};
 
 function sha256(str) {
   return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str))
@@ -174,33 +247,29 @@ async function decryptContent(password) {
   return new TextDecoder().decode(decrypted);
 }
 
-form.addEventListener("submit", async (e) => {
+els.form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const password = input.value.trim();
-  if (!password) { errorMsg.textContent = "Введите пароль"; return; }
-
-  btn.disabled = true;
-  btn.textContent = "Проверка...";
-  errorMsg.textContent = "";
-
+  const password = els.input.value.trim();
+  if (!password) { els.error.textContent = "Введите пароль"; return; }
+  els.btn.disabled = true;
+  els.btn.textContent = "Проверка...";
+  els.error.textContent = "";
   try {
-    const hash = await sha256(password);
-    if (hash !== PWD_HASH) {
-      errorMsg.textContent = "Неверный пароль";
-      btn.disabled = false;
-      btn.textContent = "Открыть";
+    if (await sha256(password) !== PWD_HASH) {
+      els.error.textContent = "Неверный пароль";
+      els.btn.disabled = false;
+      els.btn.textContent = "Открыть";
       return;
     }
-    const html = await decryptContent(password);
-    decryptedBody.innerHTML = html;
-    lockScreen.style.display = "none";
-    protectedContent.style.display = "grid";
+    els.body.innerHTML = await decryptContent(password);
+    els.lock.style.display = "none";
+    els.content.style.display = "grid";
     sessionStorage.setItem("black-assembly-unlocked", "true");
   } catch (err) {
-    console.error("Decrypt error:", err);
-    errorMsg.textContent = "Ошибка расшифровки. Проверьте пароль.";
-    btn.disabled = false;
-    btn.textContent = "Открыть";
+    console.error(err);
+    els.error.textContent = "Ошибка расшифровки. Проверьте пароль.";
+    els.btn.disabled = false;
+    els.btn.textContent = "Открыть";
   }
 });
 </script>
