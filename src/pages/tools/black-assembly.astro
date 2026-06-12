@@ -26,14 +26,13 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <span>~30 мин чтения</span>
     </div>
   </header>
-  <div id="decrypted-body" class="prose"></div>
+  <div id="decrypted-body" class="ba-content"></div>
 </div>
 
 </BaseLayout>
 
 <style is:global>
-  /* ===== ALL styles in ONE global block ===== */
-  /* Lock screen */
+  /* ===== LOCK SCREEN ===== */
   .lock-shell {
     display: flex; align-items: center; justify-content: center;
     min-height: 70vh; padding: 2rem 1rem;
@@ -64,120 +63,172 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   .lock-form button:disabled { opacity: 0.4; cursor: not-allowed; }
   .lock-error { color: #e74c3c; font-size: 0.88rem; min-height: 1.3rem; }
 
-  /* Protected content container */
+  /* ===== ARTICLE LAYOUT ===== */
   #protected-content {
-    display: grid; gap: 1.5rem; padding: 1rem 0.75rem;
+    display: grid; gap: 1.25rem;
+    margin: 0 auto;
+    width: 100%;
     max-width: 100%;
   }
+
   .article-head {
-    display: grid; gap: 0.8rem; max-width: 100%;
+    display: grid; gap: 0.6rem;
+    max-width: 100%;
   }
   .article-head h1 {
     margin: 0;
-    font-size: clamp(1.5rem, 5vw, 3.8rem);
-    line-height: 0.95; letter-spacing: -0.04em;
+    font-size: 1.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
     word-break: break-word;
   }
   .meta {
-    display: flex; gap: 0.8rem; flex-wrap: wrap;
-    color: var(--muted, #999); font-size: 0.85rem;
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    color: var(--muted, #999); font-size: 0.8rem;
   }
 
-  /* Decrypted body — prose styles for innerHTML */
-  #decrypted-body.prose {
-    padding: 1rem;
-    background:
-      linear-gradient(180deg, rgba(255, 248, 232, 0.028), rgba(255, 248, 232, 0.012)),
-      var(--panel, #1a1a1e);
-    border-radius: 1rem;
-    max-width: 100%;
-    font-size: 0.95rem;
-    line-height: 1.6;
+  /* ===== DECRYPTED CONTENT (innerHTML) ===== */
+  #decrypted-body.ba-content {
+    /* remove site's .prose max-width interference */
+    max-width: 100% !important;
+    width: 100%;
+    padding: 0;
+    background: none;
+    font-size: 0.92rem;
+    line-height: 1.65;
     overflow-wrap: break-word;
+    word-break: break-word;
   }
-  #decrypted-body.prose h1, #decrypted-body.prose h2, #decrypted-body.prose h3 {
-    margin: 1.5em 0 0.6em; line-height: 1.2;
+  #decrypted-body.ba-content h1,
+  #decrypted-body.ba-content h2,
+  #decrypted-body.ba-content h3 {
+    margin: 1.2em 0 0.5em;
+    line-height: 1.2;
+    font-weight: 700;
   }
-  #decrypted-body.prose h1 { font-size: 1.6rem; }
-  #decrypted-body.prose h2 { font-size: 1.3rem; }
-  #decrypted-body.prose h3 { font-size: 1.1rem; }
-  #decrypted-body.prose p { margin: 0.7em 0; }
-  #decrypted-body.prose blockquote {
-    margin: 0.8rem 0; padding: 0.5rem 0.8rem;
+  #decrypted-body.ba-content h1 { font-size: 1.35rem; }
+  #decrypted-body.ba-content h2 { font-size: 1.15rem; }
+  #decrypted-body.ba-content h3 { font-size: 1.05rem; }
+  #decrypted-body.ba-content p { margin: 0.6em 0; }
+  #decrypted-body.ba-content blockquote {
+    margin: 0.6rem 0;
+    padding: 0.4rem 0.6rem;
     border-left: 3px solid var(--accent, #d8ad62);
-    background: rgba(255,255,255,0.03);
-    border-radius: 0 0.4rem 0.4rem 0;
-    color: var(--muted, #999); font-style: italic;
+    background: rgba(255,255,255,0.025);
+    border-radius: 0 0.35rem 0.35rem 0;
+    color: var(--muted, #bbb);
+    font-style: italic;
+    font-size: 0.9rem;
   }
-  #decrypted-body.prose ul, #decrypted-body.prose ol {
-    padding-left: 1.2rem; margin: 0.5rem 0;
+  #decrypted-body.ba-content ul,
+  #decrypted-body.ba-content ol {
+    padding-left: 1.2rem;
+    margin: 0.4rem 0;
   }
-  #decrypted-body.prose li { margin: 0.3rem 0; }
-  #decrypted-body.prose hr {
-    border: none; border-top: 1px solid var(--line, #333);
-    margin: 1.5rem 0;
+  #decrypted-body.ba-content li { margin: 0.2rem 0; }
+  #decrypted-body.ba-content hr {
+    border: none;
+    border-top: 1px solid var(--line, #333);
+    margin: 1.2rem 0;
   }
-  #decrypted-body.prose a { color: var(--accent, #d8ad62); text-decoration: underline; }
-  #decrypted-body.prose a:hover { opacity: 0.8; }
-  #decrypted-body.prose img {
-    max-width: 100%; height: auto;
-    border-radius: 0.5rem; margin: 1rem 0;
+  #decrypted-body.ba-content a {
+    color: var(--accent, #d8ad62);
+    text-decoration: underline;
+    word-break: break-all;
   }
-  #decrypted-body.prose pre {
-    overflow-x: auto; max-width: 100%;
-    font-size: 0.82rem; padding: 0.8rem;
-    border-radius: 0.6rem;
-    background: rgba(0,0,0,0.25);
-    line-height: 1.4;
+  #decrypted-body.ba-content img {
+    max-width: 100% !important;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 0.8rem 0;
   }
-  #decrypted-body.prose code { font-size: 0.82rem; word-break: break-all; }
-  #decrypted-body.prose pre code { word-break: normal; }
-  #decrypted-body.prose table {
-    display: block; overflow-x: auto; max-width: 100%;
-    border-collapse: collapse; font-size: 0.82rem;
-    margin: 1rem 0; white-space: nowrap;
+  #decrypted-body.ba-content pre {
+    overflow-x: auto;
+    max-width: 100%;
+    font-size: 0.78rem;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    background: rgba(0,0,0,0.2);
+    line-height: 1.35;
+    margin: 0.6rem 0;
   }
-  #decrypted-body.prose table th {
-    background: rgba(255,255,255,0.06);
-    padding: 0.45rem 0.5rem;
+  #decrypted-body.ba-content code {
+    font-size: 0.78rem;
+    word-break: break-all;
+  }
+  #decrypted-body.ba-content pre code {
+    word-break: normal;
+  }
+
+  /* ===== TABLES — responsive ===== */
+  #decrypted-body.ba-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin: 0.8rem 0;
+    /* NO white-space: nowrap — let cells wrap */
+    word-break: break-word;
+  }
+  #decrypted-body.ba-content table th {
+    background: rgba(255,255,255,0.05);
+    padding: 0.35rem 0.4rem;
     border: 1px solid var(--line, #333);
-    text-align: left; font-weight: 700;
+    text-align: left;
+    font-weight: 700;
   }
-  #decrypted-body.prose table td {
-    padding: 0.4rem 0.5rem;
+  #decrypted-body.ba-content table td {
+    padding: 0.3rem 0.4rem;
     border: 1px solid var(--line, #333);
     vertical-align: top;
   }
-  #decrypted-body.prose table tr:nth-child(even) {
+  #decrypted-body.ba-content table tr:nth-child(even) {
     background: rgba(255,255,255,0.02);
   }
 
-  /* RESPONSIVE — tablet and up */
-  @media (min-width: 768px) {
-    #protected-content {
-      gap: 1.75rem; padding: 1.35rem 1rem;
-    }
-    .article-head { gap: 1.1rem; }
-    .article-head h1 { font-size: clamp(2rem, 6vw, 4.2rem); }
-    #decrypted-body.prose {
-      padding: 1.8rem 2rem;
-      border-radius: 0;
-      font-size: 1rem;
-    }
-    #decrypted-body.prose h1 { font-size: 2rem; }
-    #decrypted-body.prose h2 { font-size: 1.5rem; }
-    #decrypted-body.prose h3 { font-size: 1.2rem; }
-    #decrypted-body.prose table { font-size: 0.88rem; }
-    #decrypted-body.prose table th,
-    #decrypted-body.prose table td { padding: 0.5rem 0.7rem; }
+  /* ===== RESPONSIVE ===== */
+  @media (min-width: 480px) {
+    .article-head h1 { font-size: 1.7rem; letter-spacing: -0.04em; }
+    #decrypted-body.ba-content { font-size: 0.95rem; }
+    #decrypted-body.ba-content table { font-size: 0.82rem; }
+    #decrypted-body.ba-content table th,
+    #decrypted-body.ba-content table td { padding: 0.4rem 0.5rem; }
   }
 
-  /* DESKTOP — width limit */
-  @media (min-width: 1000px) {
+  @media (min-width: 768px) {
     #protected-content {
-      max-width: 920px;
-      margin: 0 auto;
+      gap: 1.5rem;
+      max-width: 860px;
     }
+    .article-head h1 { font-size: 2.2rem; }
+    .meta { font-size: 0.85rem; }
+    #decrypted-body.ba-content {
+      padding: 1.5rem;
+      background:
+        linear-gradient(180deg, rgba(255, 248, 232, 0.03), rgba(255, 248, 232, 0.01)),
+        var(--panel, #1a1a1e);
+      border-radius: 1rem;
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+    #decrypted-body.ba-content h1 { font-size: 1.6rem; }
+    #decrypted-body.ba-content h2 { font-size: 1.3rem; }
+    #decrypted-body.ba-content h3 { font-size: 1.1rem; }
+    #decrypted-body.ba-content table {
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    #decrypted-body.ba-content table th,
+    #decrypted-body.ba-content table td { padding: 0.45rem 0.6rem; }
+    #decrypted-body.ba-content pre { font-size: 0.85rem; }
+    #decrypted-body.ba-content code { font-size: 0.85rem; }
+  }
+
+  @media (min-width: 1000px) {
+    #protected-content { max-width: 920px; }
   }
 </style>
 
@@ -233,22 +284,21 @@ async function decryptContent(password) {
 
 els.form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const password = els.input.value.trim();
-  if (!password) { els.error.textContent = "Введите пароль"; return; }
+  const pw = els.input.value.trim();
+  if (!pw) { els.error.textContent = "Введите пароль"; return; }
   els.btn.disabled = true; els.btn.textContent = "Проверка..."; els.error.textContent = "";
   try {
-    if (await sha256(password) !== PWD_HASH) {
+    if (await sha256(pw) !== PWD_HASH) {
       els.error.textContent = "Неверный пароль";
       els.btn.disabled = false; els.btn.textContent = "Открыть";
       return;
     }
-    els.body.innerHTML = await decryptContent(password);
+    els.body.innerHTML = await decryptContent(pw);
     els.lock.style.display = "none";
     els.content.style.display = "grid";
-    sessionStorage.setItem("black-assembly-unlocked", "true");
   } catch (err) {
     console.error(err);
-    els.error.textContent = "Ошибка расшифровки. Проверьте пароль.";
+    els.error.textContent = "Ошибка расшифровки";
     els.btn.disabled = false; els.btn.textContent = "Открыть";
   }
 });
